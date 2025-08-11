@@ -1,7 +1,6 @@
 # 🖼️ AI Image Upscaler 🚀  
 *A sleek, modern web application that enhances low-resolution images using powerful AI models.*
 
-![License](https://img.shields.io/badge/license-MIT-blue.svg)  
 ![Node.js](https://img.shields.io/badge/Node.js-18.x-green.svg)  
 ![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)  
 ![MongoDB](https://img.shields.io/badge/MongoDB-Atlas-brightgreen.svg)  
@@ -44,6 +43,7 @@
 ---
 
 ## 📂 Project Structure  
+```bash
 /
 ├── controllers/ # Core logic for handling requests
 ├── middleware/ # Express middleware (auth, logging)
@@ -55,12 +55,8 @@
 ├── .env # Environment variables (not committed)
 ├── index.js # Main server entry point
 └── package.json
+```
 
-yaml
-Copy
-Edit
-
----
 
 ## 🚀 Getting Started  
 
@@ -75,29 +71,18 @@ Edit
 ```bash
 git clone https://github.com/your-username/ai-image-upscaler.git
 cd ai-image-upscaler
+
 2. Install backend dependencies
-bash
-Copy
-Edit
 npm install
+
 3. Install Python dependencies
-bash
-Copy
-Edit
 pip install -r requirements.txt
-Note: Create a requirements.txt file with packages such as torch, transformers, Pillow, etc.
 
 4. Set up environment variables
 Create a .env file in the root of the project:
-
-env
-Copy
-Edit
 JWT_SECRET="your_super_secret_jwt_key"
 MONGO_URI="mongodb://127.0.0.1:27017/upscaler"
+
 5. Run the server
-bash
-Copy
-Edit
 node index.js
 The app will be live at http://localhost:8000

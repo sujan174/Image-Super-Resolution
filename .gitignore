@@ -1,0 +1,14 @@
+# Dependencies
+/node_modules
+
+# Environment Variables
+.env
+
+# Log files
+log.txt
+
+# Private image folders
+/public/
+/uploads/
+/outputs/
+/jobs/

@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upscaled Image Result</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script type="module" src="https://cdn.jsdelivr.net/npm/img-comparison-slider@8/dist/index.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/img-comparison-slider@8/dist/style.css" />
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        img-comparison-slider {
+            --divider-width: 3px;
+            --divider-color: #8B5CF6;
+            --handle-size: 50px;
+            width: 100%;
+            height: 100%;
+        }
+        .spinner {
+            border-color: #8B5CF6;
+            border-top-color: transparent;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body class="bg-gray-900 text-white flex items-center justify-center min-h-screen p-4">
+
+    <div class="w-full max-w-4xl bg-gray-800/50 backdrop-blur-lg rounded-2xl shadow-2xl shadow-black/30 border border-gray-700 p-6 sm:p-8">
+        
+        <h1 class="text-3xl font-bold text-center mb-6">Upscaling Complete!</h1>
+        
+        <div id="image-container" class="w-full mx-auto bg-black rounded-lg overflow-hidden shadow-lg mb-8 flex items-center justify-center min-h-[300px]">
+            <div id="loading-spinner" class="text-center">
+                <div class="spinner w-12 h-12 border-4 rounded-full mx-auto"></div>
+                <p class="text-gray-400 mt-4">Preparing comparison view...</p>
+            </div>
+            <img-comparison-slider id="comparison-slider" class="hidden w-full h-full">
+                <img slot="first" src="<%= originalImageUrl %>" alt="Original" class="w-full h-full object-contain bg-black" />
+                <img slot="second" src="<%= imageUrl %>" alt="Upscaled" class="w-full h-full object-contain bg-black" />
+            </img-comparison-slider>
+        </div>
+
+        <div class="bg-gray-900/50 rounded-lg p-4 mb-8 border border-gray-700">
+            <h2 class="text-xl font-bold mb-3 text-purple-400">Processing Details</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-2 text-sm text-gray-300">
+                <p><span class="font-semibold text-gray-400">Model Used:</span> <%= model %></p>
+                <p><span class="font-semibold text-gray-400">Scale Factor:</span> <%= scale %>x</p>
+                <p><span class="font-semibold text-gray-400">Original Size:</span> <%= originalDimensions %></p>
+                <p><span class="font-semibold text-gray-400">Upscaled Size:</span> <%= upscaledDimensions %></p>
+            </div>
+        </div>
+
+        <div id="feedback-container" class="text-left bg-gray-900/50 rounded-lg p-6 mb-8 border border-gray-700 max-w-3xl mx-auto transition-all duration-500 ease-out">
+            <div id="feedback-content">
+                <h2 class="text-xl font-bold mb-4 text-center text-gray-300">Did you like the result?</h2>
+                <div class="flex justify-center gap-4">
+                    <button type="button" id="like-btn" class="w-full sm:w-auto bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold py-3 px-8 rounded-lg shadow-lg shadow-green-600/30 transform hover:scale-105 transition-transform duration-300">Yes</button>
+                    <button type="button" id="dislike-btn" class="w-full sm:w-auto bg-gradient-to-r from-red-500 to-rose-600 hover:from-red-600 hover:to-rose-700 text-white font-bold py-3 px-8 rounded-lg shadow-lg shadow-red-600/30 transform hover:scale-105 transition-transform duration-300">No</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex flex-col sm:flex-row justify-center gap-4">
+            <a href="<%= imageUrl %>" download class="w-full sm:w-auto bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-lg">
+                Download Image
+            </a>
+            <a href="/upload" class="w-full sm:w-auto bg-gray-600 hover:bg-gray-500 text-white font-bold py-3 px-6">
+                Upscale Another
+            </a>
+        </div>
+    </div>
+
+    <script>
+        const originalImageUrl = "<%= originalImageUrl %>";
+        const imageContainer = document.getElementById('image-container');
+        const loadingSpinner = document.getElementById('loading-spinner');
+        const comparisonSlider = document.getElementById('comparison-slider');
+        const img = new Image();
+        img.src = originalImageUrl;
+        img.onload = () => {
+            imageContainer.style.aspectRatio = img.naturalWidth / img.naturalHeight;
+            loadingSpinner.classList.add('hidden');
+            comparisonSlider.classList.remove('hidden');
+        };
+        img.onerror = () => {
+            imageContainer.style.aspectRatio = '16 / 9';
+            loadingSpinner.classList.add('hidden');
+            comparisonSlider.classList.remove('hidden');
+        };
+
+        const likeBtn = document.getElementById('like-btn');
+        const dislikeBtn = document.getElementById('dislike-btn');
+        const feedbackContainer = document.getElementById('feedback-container');
+        const feedbackContent = document.getElementById('feedback-content');
+
+        async function submitFeedback(liked) {
+            const originalImageFilename = "<%= originalImageUrl.split('/').pop() %>";
+            const upscaledImageFilename = "<%= imageUrl.split('/').pop() %>";
+            const modelUsed = "<%= model %>";
+            const scaleFactor = "<%= scale %>";
+            const likedResult = liked ? 'yes' : 'no';
+
+            const formData = new URLSearchParams();
+            formData.append('originalImageFilename', originalImageFilename);
+            formData.append('upscaledImageFilename', upscaledImageFilename);
+            formData.append('modelUsed', modelUsed);
+            formData.append('scaleFactor', scaleFactor);
+            formData.append('likedResult', likedResult);
+
+            try {
+                const response = await fetch('/upload/feedback', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: formData
+                });
+
+                if (response.ok) {
+                    feedbackContainer.classList.add('opacity-0', 'scale-95');
+                    setTimeout(() => {
+                        feedbackContainer.style.display = 'none';
+                    }, 500);
+                } else {
+                    feedbackContent.innerHTML = '<h2 class="text-xl font-bold text-center text-red-400">Could not submit feedback.</h2>';
+                }
+            } catch (error) {
+                console.error('Feedback submission error:', error);
+                feedbackContent.innerHTML = '<h2 class="text-xl font-bold text-center text-red-400">Could not submit feedback.</h2>';
+            }
+        }
+
+        if (likeBtn && dislikeBtn) {
+            likeBtn.addEventListener('click', () => submitFeedback(true));
+            dislikeBtn.addEventListener('click', () => submitFeedback(false));
+        }
+    </script>
+</body>
+</html>

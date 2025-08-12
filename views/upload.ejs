@@ -5,84 +5,59 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Image Upscaler</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-        }
-        .animate-blob {
-            animation: blob 8s infinite;
-        }
-        .animation-delay-2000 {
-            animation-delay: -2s;
-        }
-        .animation-delay-4000 {
-            animation-delay: -4s;
-        }
+        body { font-family: 'Inter', sans-serif; }
+        .animate-blob { animation: blob 8s infinite; }
         @keyframes blob {
-            0% {
-                transform: translate(0px, 0px) scale(1);
-            }
-            33% {
-                transform: translate(40px, -60px) scale(1.1);
-            }
-            66% {
-                transform: translate(-30px, 30px) scale(0.9);
-            }
-            100% {
-                transform: translate(0px, 0px) scale(1);
-            }
+            0%, 100% { transform: translate(0px, 0px) scale(1); }
+            33% { transform: translate(40px, -60px) scale(1.1); }
+            66% { transform: translate(-30px, 30px) scale(0.9); }
         }
     </style>
 </head>
 <body class="bg-gray-900 text-white">
+    <!-- Header Buttons -->
     <div class="absolute top-4 right-4 flex items-center space-x-4 z-20">
-        <a href="/user/gallery" class="text-sm font-medium bg-gray-800/50 border border-gray-700 text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-200 px-4 py-2 rounded-full">My Gallery</a>
-        <% if (typeof user !== 'undefined' && user.admin) { %>
-            <a href="/user/admin" class="text-sm font-medium bg-yellow-600/50 border border-yellow-500 text-yellow-300 hover:bg-yellow-700 hover:text-white transition-colors duration-200 px-4 py-2 rounded-full">Admin</a>
-        <% } %>
-        <a href="/user/logout" class="text-sm font-medium bg-gray-800/50 border border-gray-700 text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-200 px-4 py-2 rounded-full">Logout</a>
+        <a href="/user/gallery" class="text-sm font-medium bg-gray-800/50 border border-gray-700 text-gray-300 hover:bg-gray-700 px-4 py-2 rounded-full">My Gallery</a>
+        <a href="/user/logout" class="text-sm font-medium bg-gray-800/50 border border-gray-700 text-gray-300 hover:bg-gray-700 px-4 py-2 rounded-full">Logout</a>
     </div>
 
+    <!-- Main Content -->
     <div class="relative min-h-screen flex items-center justify-center p-4 overflow-hidden">
-        
         <div class="absolute top-0 -left-4 w-72 h-72 bg-purple-600 rounded-full mix-blend-screen filter blur-xl opacity-20 animate-blob"></div>
         <div class="absolute top-0 -right-4 w-72 h-72 bg-blue-500 rounded-full mix-blend-screen filter blur-xl opacity-20 animate-blob animation-delay-2000"></div>
         <div class="absolute -bottom-8 left-20 w-72 h-72 bg-pink-500 rounded-full mix-blend-screen filter blur-xl opacity-20 animate-blob animation-delay-4000"></div>
 
         <div class="relative w-full max-w-lg bg-gray-800/50 backdrop-blur-lg rounded-2xl shadow-2xl shadow-black/30 border border-gray-700">
-            
             <div class="p-8 md:p-10">
                 <div class="text-center mb-6">
                     <h1 class="text-3xl font-bold tracking-tight">AI Image Upscaler</h1>
                     <p class="text-gray-400 mt-2">Enhance your images to a higher resolution.</p>
                 </div>
 
-                <div id="message-container">
-                    <% if (typeof error !== 'undefined' && error) { %>
-                        <div class="bg-red-500/10 border border-red-500/30 text-red-300 text-sm rounded-lg p-3 mb-6 text-center" role="alert">
-                            <%= error %>
-                        </div>
-                    <% } %>
-                </div>
-
-                <form id="uploadForm">
+                <form id="uploadForm" action="/upload" method="POST" enctype="multipart/form-data">
                     <div class="space-y-6">
                         <div>
-                            <label for="modelType" class="block mb-2 text-sm font-medium text-gray-300">Upscaling Model</label>
+                            <div class="flex items-center gap-2 mb-2">
+                                <label for="modelType" class="text-sm font-medium text-gray-300">Upscaling Model</label>
+                                <button type="button" id="info-btn" class="text-gray-400 hover:text-white">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                                    </svg>
+                                </button>
+                            </div>
                             <div class="relative" id="custom-select-wrapper">
                                 <select name="modelType" id="modelType" class="hidden">
                                     <option value="EDSR">EDSR</option>
-                                    <option value="RealESRGAN">Real-ESRGAN</option>
+                                    <option value="RealESRGAN">RealESRGAN</option>
                                     <option value="SwinIR">SwinIR</option>
                                 </select>
-                                <div id="custom-select-trigger" class="flex items-center justify-between w-full px-4 py-3 bg-gray-900/60 border border-gray-700 rounded-lg cursor-pointer">
+                                <div id="custom-select-trigger" class="flex items-center justify-between w-full px-4 py-3 bg-gray-900/60 border border-gray-700 rounded-lg cursor-pointer transition-all duration-300 hover:border-purple-500">
                                     <span id="custom-select-value">EDSR</span>
-                                    <svg class="w-5 h-5 text-gray-400" id="custom-select-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                    <svg class="w-5 h-5 text-gray-400 transform transition-transform duration-300" id="custom-select-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                                 </div>
-                                <div id="custom-select-options" class="absolute z-10 w-full mt-2 bg-gray-900 border border-gray-700 rounded-lg shadow-lg hidden">
+                                <div id="custom-select-options" class="absolute z-10 w-full mt-2 bg-gray-900 border border-gray-700 rounded-lg shadow-lg hidden origin-top transition-all duration-200 ease-out transform opacity-0 scale-95">
                                     <div class="p-1">
                                         <div class="custom-option p-2 rounded-md hover:bg-purple-600 cursor-pointer" data-value="EDSR">EDSR</div>
                                         <div class="custom-option p-2 rounded-md hover:bg-purple-600 cursor-pointer" data-value="RealESRGAN">Real-ESRGAN</div>
@@ -109,7 +84,7 @@
                         </div>
 
                         <div>
-                            <button type="submit" id="submit-btn" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-4 rounded-lg transition-all duration-300">
+                            <button type="submit" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-4 rounded-lg">
                                 Upscale Image
                             </button>
                         </div>
@@ -119,81 +94,69 @@
         </div>
     </div>
 
+    <!-- Info Modal -->
+    <div id="info-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center hidden z-50">
+        <div class="bg-gray-800 rounded-2xl shadow-xl border border-gray-700 p-8 w-full max-w-md">
+            <h2 class="text-2xl font-bold mb-4">Model Explanations</h2>
+            <div class="space-y-4 text-gray-300">
+                <div>
+                    <h3 class="font-bold text-purple-400">EDSR - The Faithful Upscaler</h3>
+                    <p class="text-sm">Excellent for clean upscaling. It focuses on enhancing existing details to make them sharper and clearer while staying true to the original. Ideal for high-quality photos and digital art.</p>
+                </div>
+                <div>
+                    <h3 class="font-bold text-purple-400">Real-ESRGAN - The Restorer</h3>
+                    <p class="text-sm">A powerful generative model that excels at restoring old or compressed photos. It can creatively "hallucinate" and add new, plausible details where the original information was lost.</p>
+                </div>
+                <div>
+                    <h3 class="font-bold text-purple-400">SwinIR - The Detail Expert</h3>
+                    <p class="text-sm">A state-of-the-art Transformer-based model. It's exceptionally good at reconstructing realistic, fine-grained textures like skin, fabric, or hair, producing very natural results.</p>
+                </div>
+            </div>
+            <p class="text-xs text-gray-500 mt-6 pt-4 border-t border-gray-700 italic">
+                Disclaimer: This app uses smaller versions of these models and might not perform as well as the full-sized originals.
+            </p>
+            <button id="close-modal-btn" class="mt-4 w-full bg-gray-600 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded-lg">
+                Close
+            </button>
+        </div>
+    </div>
+
     <script>
-        const uploadForm = document.getElementById('uploadForm');
-        const submitBtn = document.getElementById('submit-btn');
-        const messageContainer = document.getElementById('message-container');
-        
-        uploadForm.addEventListener('submit', async (event) => {
-            event.preventDefault();
-            
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'Processing...';
-            submitBtn.classList.remove('bg-purple-600', 'hover:bg-purple-700');
-            submitBtn.classList.add('bg-gray-600', 'cursor-not-allowed');
-            messageContainer.innerHTML = '';
-
-            const formData = new FormData(uploadForm);
-            
-            try {
-                const response = await fetch('/upload', {
-                    method: 'POST',
-                    body: formData,
-                });
-
-                if (response.redirected) {
-                    const finalUrl = new URL(response.url);
-                    if (finalUrl.pathname.includes('/result')) {
-                        window.location.href = response.url;
-                    } else if (finalUrl.searchParams.has('error')) {
-                        const errorMessage = finalUrl.searchParams.get('error');
-                        messageContainer.innerHTML = `<div class="bg-red-500/10 border border-red-500/30 text-red-300 text-sm rounded-lg p-3 mb-6 text-center" role="alert">${errorMessage}</div>`;
-                        resetButton();
-                    }
-                } else {
-                    const errorText = await response.text();
-                    messageContainer.innerHTML = `<div class="bg-red-500/10 border border-red-500/30 text-red-300 text-sm rounded-lg p-3 mb-6 text-center" role="alert">${errorText}</div>`;
-                    resetButton();
-                }
-            } catch (error) {
-                console.error('Submission error:', error);
-                messageContainer.innerHTML = `<div class="bg-red-500/10 border border-red-500/30 text-red-300 text-sm rounded-lg p-3 mb-6 text-center" role="alert">An unexpected error occurred.</div>`;
-                resetButton();
-            }
-        });
-
-        function resetButton() {
-            submitBtn.disabled = false;
-            submitBtn.textContent = 'Upscale Image';
-            submitBtn.classList.add('bg-purple-600', 'hover:bg-purple-700');
-            submitBtn.classList.remove('bg-gray-600', 'cursor-not-allowed');
-        }
-
         const imageFileInput = document.getElementById('imageFile');
         const fileNameDiv = document.getElementById('fileName');
         const scaleButtonsContainer = document.getElementById('scaleButtons');
         const scaleInput = document.getElementById('scale');
+        const infoBtn = document.getElementById('info-btn');
+        const infoModal = document.getElementById('info-modal');
+        const closeModalBtn = document.getElementById('close-modal-btn');
         const selectWrapper = document.getElementById('custom-select-wrapper');
         const selectTrigger = document.getElementById('custom-select-trigger');
         const selectValue = document.getElementById('custom-select-value');
         const selectOptions = document.getElementById('custom-select-options');
+        const selectArrow = document.getElementById('custom-select-arrow');
         const nativeSelect = document.getElementById('modelType');
 
+        infoBtn.addEventListener('click', () => infoModal.classList.remove('hidden'));
+        closeModalBtn.addEventListener('click', () => infoModal.classList.add('hidden'));
+        
         selectTrigger.addEventListener('click', () => {
-            selectOptions.classList.toggle('hidden');
+            const isVisible = !selectOptions.classList.contains('hidden');
+            if (isVisible) {
+                selectOptions.classList.add('opacity-0', 'scale-95');
+                setTimeout(() => selectOptions.classList.add('hidden'), 200);
+            } else {
+                selectOptions.classList.remove('hidden');
+                setTimeout(() => selectOptions.classList.remove('opacity-0', 'scale-95'), 10);
+            }
+            selectArrow.classList.toggle('rotate-180');
         });
 
         selectOptions.addEventListener('click', (e) => {
             if (e.target.classList.contains('custom-option')) {
-                selectValue.textContent = e.target.dataset.value;
-                nativeSelect.value = e.target.dataset.value;
-                selectOptions.classList.add('hidden');
-            }
-        });
-        
-        document.addEventListener('click', (e) => {
-            if (!selectWrapper.contains(e.target)) {
-                selectOptions.classList.add('hidden');
+                const value = e.target.dataset.value;
+                selectValue.textContent = value;
+                nativeSelect.value = value;
+                selectTrigger.click();
             }
         });
 
@@ -213,6 +176,5 @@
             clickedButton.classList.remove('bg-gray-700');
         });
     </script>
-
 </body>
 </html>

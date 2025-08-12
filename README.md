@@ -15,7 +15,14 @@
 - **Interactive Result Viewer** – Compare **Before & After** with a smooth slider.  
 - **User Feedback System** – Collect ratings on the quality of upscaled images.  
 - **Resolution Limiter** – Protects server resources by rejecting overly large images.  
-
+- **Variable Scaling: Upscale** images by 2x, 3x, or 4x.
+- **Interactive Result Viewer** A "Before & After" slider to compare the original and upscaled images.
+- **User Gallery** A personal gallery for each user to view their history of upscaled images.
+- **User Feedback System** Collect user ratings on the quality of the upscaled images.
+- **Advanced Admin Dashboard**
+- Analytics View: Charts showing total users, total upscales, model usage, and user feedback (liked vs. disliked).
+  -   User Management: A complete list of all users with the ability to view their detailed history.
+  -   Feedback Viewer: Pages to view all liked or disliked images, with the ability to download them in bulk as a zip file.
 ---
 
 ## Tech Stack  
@@ -23,6 +30,7 @@
 **Frontend:**  
 - EJS (Embedded JavaScript Templates)  
 - Tailwind CSS  
+- Chart.js
 
 **Backend:**  
 - Node.js  
@@ -31,7 +39,8 @@
 - JWT (JSON Web Tokens) for authentication  
 - bcrypt for password hashing  
 - Multer for file uploads  
-- Sharp for image processing  
+- Sharp for image processing 
+- Archiver for creating zip files 
 
 **AI / Python:**  
 - Python 3  
@@ -53,7 +62,8 @@
 ├── views/ # EJS template files
 ├── .env # Environment variables (not committed)
 ├── index.js # Main server entry point
-└── package.json
+├── package.json
+└── requirements.txt
 ```
 
 ---
@@ -91,3 +101,4 @@ JWT_SECRET="your_super_secret_jwt_key"
 node index.js
 ```
 The app will be available at: http://localhost:8000
+

@@ -14,7 +14,6 @@ function checkForAuthentication(req, res, next) {
         res.clearCookie("token");
         return res.redirect("/user/login");
     }
-
     return next();
 }
 

@@ -23,7 +23,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-router.get('/', (req, res) => {
+router.get('/', checkForAuthentication,(req, res) => {
     const { error, success } = req.query;
     res.render("upload", { error, success });
 });

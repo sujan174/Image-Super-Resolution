@@ -17,6 +17,8 @@
             <nav>
                 <a href="/user/admin" class="block py-2.5 px-4 rounded bg-purple-600">Analytics</a>
                 <a href="/user/admin/users" class="block py-2.5 px-4 rounded hover:bg-gray-700">Users</a>
+                <a href="/user/admin/feedback?status=liked" class="block py-2.5 px-4 rounded hover:bg-gray-700">Liked Images</a>
+                <a href="/user/admin/feedback?status=disliked" class="block py-2.5 px-4 rounded hover:bg-gray-700">Disliked Images</a>
                 <a href="/upload" class="block py-2.5 px-4 rounded hover:bg-gray-700 mt-4">Back to App</a>
                 <a href="/user/logout" class="block py-2.5 px-4 rounded hover:bg-gray-700">Logout</a>
             </nav>
@@ -26,7 +28,7 @@
         <div class="flex-1 p-10">
             <h2 class="text-3xl font-bold mb-6">Analytics Overview</h2>
             
-            <% if (error) { %>
+            <% if (typeof error !== 'undefined' && error) { %>
                 <div class="bg-red-500/20 text-red-300 p-4 rounded-lg mb-6"><%= error %></div>
             <% } %>
 
@@ -53,7 +55,6 @@
     </div>
 
     <script>
-        // Feedback Pie Chart
         const feedbackCtx = document.getElementById('feedbackChart').getContext('2d');
         new Chart(feedbackCtx, {
             type: 'pie',
@@ -73,7 +74,6 @@
             }
         });
 
-        // Model Usage Bar Chart
         const modelCtx = document.getElementById('modelUsageChart').getContext('2d');
         new Chart(modelCtx, {
             type: 'bar',

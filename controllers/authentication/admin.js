@@ -1,5 +1,6 @@
 const userModel = require('../../models/user');
 const feedbackModel = require('../../models/feedback');
+const archiver = require("archiver");
 
 async function handleAdminDashboard(req, res) {
     try {
@@ -70,8 +71,33 @@ async function handleGetUserDetail(req, res) {
     }
 }
 
+async function handleAdminFeedbackView(req, res) {
+    try {
+        const { status } = req.query;
+        const likedResult = status === 'liked';
+        
+        const feedback = await feedbackModel.find({ likedResult: likedResult }).populate('userId', 'name');
+        
+        res.render('admin-feedback', {
+            feedback,
+            title: likedResult ? 'Liked Images' : 'Disliked Images',
+            error: null
+        });
+
+    } catch (error) {
+        console.error("Error fetching feedback data:", error);
+        res.render('admin-feedback', {
+            feedback: [],
+            title: 'Error',
+            error: "Could not load feedback data."
+        });
+    }
+}
+
 module.exports = {
     handleAdminDashboard,
     handleGetAllUsers,
-    handleGetUserDetail
+    handleGetUserDetail,
+    handleAdminFeedbackView,
 };
+

@@ -16,6 +16,8 @@
             <nav>
                 <a href="/user/admin" class="block py-2.5 px-4 rounded hover:bg-gray-700">Analytics</a>
                 <a href="/user/admin/users" class="block py-2.5 px-4 rounded bg-purple-600">Users</a>
+                <a href="/user/admin/feedback?status=liked" class="block py-2.5 px-4 rounded hover:bg-gray-700">Liked Images</a>
+                <a href="/user/admin/feedback?status=disliked" class="block py-2.5 px-4 rounded hover:bg-gray-700">Disliked Images</a>
                 <a href="/upload" class="block py-2.5 px-4 rounded hover:bg-gray-700 mt-4">Back to App</a>
                 <a href="/user/logout" class="block py-2.5 px-4 rounded hover:bg-gray-700">Logout</a>
             </nav>
@@ -24,19 +26,19 @@
         <!-- Main Content -->
         <div class="flex-1 p-10">
             <h2 class="text-3xl font-bold mb-6">User Management</h2>
-            <div class="bg-gray-800 rounded-lg overflow-hidden">
+            <div class="bg-gray-800 rounded-lg overflow-hidden shadow-xl border border-gray-700">
                 <table class="min-w-full">
-                    <thead class="bg-gray-700">
+                    <thead class="bg-gray-700/50">
                         <tr>
-                            <th class="p-4 text-left">Name</th>
-                            <th class="p-4 text-left">Email</th>
-                            <th class="p-4 text-left">Joined</th>
-                            <th class="p-4 text-left">Actions</th>
+                            <th class="p-4 text-left text-sm font-semibold text-gray-300">Name</th>
+                            <th class="p-4 text-left text-sm font-semibold text-gray-300">Email</th>
+                            <th class="p-4 text-left text-sm font-semibold text-gray-300">Joined</th>
+                            <th class="p-4 text-left text-sm font-semibold text-gray-300">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         <% users.forEach(user => { %>
-                            <tr class="border-b border-gray-700">
+                            <tr class="border-b border-gray-700 last:border-b-0">
                                 <td class="p-4"><%= user.name %></td>
                                 <td class="p-4"><%= user.email %></td>
                                 <td class="p-4"><%= new Date(user.createdAt).toLocaleDateString() %></td>

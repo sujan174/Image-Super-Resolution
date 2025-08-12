@@ -78,14 +78,14 @@ def main():
                 model_identifier = 'caidas/swin2SR-classical-sr-x4-64'
                 upscaler = UpscalerClass(model_type=model_type, scale=4, model_name=model_identifier)
             
-            log_to_file("Upscaler instantiated. Starting 4x image processing...")
+            log_to_file("Upscaler instantiated. Starting image processing...")
             upscaled_4x_image = upscaler.upscale_image(input_path)
-            log_to_file("4x image processing finished.")
+            log_to_file("Image processing finished.")
 
             if upscaled_4x_image:
                 final_image = upscaled_4x_image
                 if requested_scale < 4:
-                    log_to_file(f"Downscaling 4x image to {requested_scale}x.")
+                    log_to_file(f"Downscaling image to {requested_scale}x.")
                     original_image = Image.open(input_path)
                     target_width = original_image.width * requested_scale
                     target_height = original_image.height * requested_scale

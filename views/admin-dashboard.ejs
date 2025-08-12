@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style> body { font-family: 'Inter', sans-serif; } </style>
+</head>
+<body class="bg-gray-900 text-white">
+    <div class="flex">
+        <!-- Sidebar -->
+        <div class="w-64 min-h-screen bg-gray-800 p-4">
+            <h1 class="text-2xl font-bold mb-8">Admin Panel</h1>
+            <nav>
+                <a href="/user/admin" class="block py-2.5 px-4 rounded bg-purple-600">Analytics</a>
+                <a href="/user/admin/users" class="block py-2.5 px-4 rounded hover:bg-gray-700">Users</a>
+                <a href="/upload" class="block py-2.5 px-4 rounded hover:bg-gray-700 mt-4">Back to App</a>
+                <a href="/user/logout" class="block py-2.5 px-4 rounded hover:bg-gray-700">Logout</a>
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1 p-10">
+            <h2 class="text-3xl font-bold mb-6">Analytics Overview</h2>
+            
+            <% if (typeof error !== 'undefined' && error) { %>
+                <div class="bg-red-500/20 text-red-300 p-4 rounded-lg mb-6"><%= error %></div>
+            <% } %>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div class="bg-gray-800 p-6 rounded-lg"><p class="text-gray-400">Total Users</p><p class="text-3xl font-bold"><%= totalUsers %></p></div>
+                <div class="bg-gray-800 p-6 rounded-lg"><p class="text-gray-400">Total Feedback Entries</p><p class="text-3xl font-bold"><%= totalFeedback %></p></div>
+            </div>
+
+            <div class="bg-gray-800 p-6 rounded-lg">
+                <h3 class="text-xl font-bold mb-4">User Feedback</h3>
+                <div class="max-w-sm mx-auto">
+                    <canvas id="feedbackChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const ctx = document.getElementById('feedbackChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: ['Liked', 'Disliked'],
+                datasets: [{
+                    label: 'Feedback',
+                    data: [<%= likedCount %>, <%= dislikedCount %>],
+                    backgroundColor: ['#10B981', '#EF4444'],
+                    borderColor: '#1F2937',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            color: '#D1D5DB'
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

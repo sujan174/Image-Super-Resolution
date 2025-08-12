@@ -24,7 +24,7 @@ async function handleUpload(req, res) {
         }
         
         const { modelType, scale } = req.body;
-        const pythonScriptPath = path.join(__dirname, '../../python_scripts/main.py');
+        const pythonScriptPath = path.join(__dirname, '..', '..', 'python_scripts', 'main.py');
         const outputFilename = `upscaled-${req.file.filename}`;
         const outputPath = path.join(IMAGES_DIR, outputFilename);
         
@@ -44,6 +44,7 @@ async function handleUpload(req, res) {
 
         pythonProcess.on('close', async (code) => {
             console.log(`[Node Log] Python script finished with exit code ${code}`);
+            
             if (code !== 0) {
                 if (fs.existsSync(req.file.path)) fs.unlinkSync(req.file.path);
                 return res.redirect(`/upload?error=${encodeURIComponent("An error occurred during image processing.")}`);
@@ -53,7 +54,9 @@ async function handleUpload(req, res) {
                     $push: {
                         imageHistory: {
                             originalPath: req.file.filename, 
-                            upscaledPath: outputFilename     
+                            upscaledPath: outputFilename,
+                            modelUsed: modelType,
+                            scaleFactor: scale
                         }
                     }
                 });

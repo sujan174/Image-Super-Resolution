@@ -2,6 +2,7 @@ const path = require('path');
 const fs = require('fs'); 
 const sharp = require('sharp'); 
 const { spawn } = require('child_process');
+const userModel = require("../../models/user")
 
 const IMAGES_DIR = path.join(__dirname, '../../public/images/');
 const LOG_FILE_PATH = path.join(__dirname, '../../log.txt');
@@ -48,7 +49,18 @@ async function handleUpload(req, res) {
                 if (fs.existsSync(req.file.path)) fs.unlinkSync(req.file.path);
                 return res.redirect(`/upload?error=${encodeURIComponent("An error occurred during image processing.")}`);
             }
-            
+            try {
+                await userModel.findByIdAndUpdate(req.user.id, {
+                    $push: {
+                        imageHistory: {
+                            path: outputFilename 
+                        }
+                    }
+                });
+            } catch (dbError) {
+                console.error("Error saving image to user history:", dbError);
+            }
+
             const upscaledImage = sharp(outputPath);
             const upscaledMetadata = await upscaledImage.metadata();
             

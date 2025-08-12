@@ -5,8 +5,8 @@ const fs = require('fs');
 const handleUpload = require('../controllers/upscale/handleUpload');
 const handleResult = require('../controllers/upscale/handleResult');
 const handleFeedback = require('../controllers/utils/handleFeedback');
-
 const checkForAuthentication = require('../middleware/checkForAuthentictaion');
+const userModel = require("../models/user")
 
 const router = express.Router();
 
@@ -23,9 +23,15 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-router.get('/', checkForAuthentication,(req, res) => {
-    const { error, success } = req.query;
-    res.render("upload", { error, success });
+router.get('/', checkForAuthentication, async (req, res) => {
+    try {
+        const { error, success } = req.query;
+        const user = await userModel.findById(req.user.id).lean();
+        res.render("upload", { error, success, user: user });
+    } catch (err) {
+        console.error("Error fetching user for upload page:", err);
+        res.redirect('/user/login');
+    }
 });
 
 router.post('/', checkForAuthentication, upload.single('imageFile'), handleUpload);

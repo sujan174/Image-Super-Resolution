@@ -38,6 +38,14 @@
     </style>
 </head>
 <body class="bg-gray-900 text-white">
+    <div class="absolute top-4 right-4 flex items-center space-x-4 z-20">
+        <a href="/user/gallery" class="text-sm font-medium bg-gray-800/50 border border-gray-700 text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-200 px-4 py-2 rounded-full">My Gallery</a>
+        <% if (typeof user !== 'undefined' && user.admin) { %>
+            <a href="/user/admin" class="text-sm font-medium bg-yellow-600/50 border border-yellow-500 text-yellow-300 hover:bg-yellow-700 hover:text-white transition-colors duration-200 px-4 py-2 rounded-full">Admin</a>
+        <% } %>
+        <a href="/user/logout" class="text-sm font-medium bg-gray-800/50 border border-gray-700 text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-200 px-4 py-2 rounded-full">Logout</a>
+    </div>
+
     <div class="relative min-h-screen flex items-center justify-center p-4 overflow-hidden">
         
         <div class="absolute top-0 -left-4 w-72 h-72 bg-purple-600 rounded-full mix-blend-screen filter blur-xl opacity-20 animate-blob"></div>
@@ -45,9 +53,7 @@
         <div class="absolute -bottom-8 left-20 w-72 h-72 bg-pink-500 rounded-full mix-blend-screen filter blur-xl opacity-20 animate-blob animation-delay-4000"></div>
 
         <div class="relative w-full max-w-lg bg-gray-800/50 backdrop-blur-lg rounded-2xl shadow-2xl shadow-black/30 border border-gray-700">
-            <div class="absolute top-4 right-4">
-                <a href="/user/logout" class="text-sm font-medium text-gray-400 hover:text-white transition-colors duration-200">Logout</a>
-            </div>
+            
             <div class="p-8 md:p-10">
                 <div class="text-center mb-6">
                     <h1 class="text-3xl font-bold tracking-tight">AI Image Upscaler</h1>
@@ -163,7 +169,6 @@
             submitBtn.classList.remove('bg-gray-600', 'cursor-not-allowed');
         }
 
-        // --- UI Logic for dropdown, buttons, etc. ---
         const imageFileInput = document.getElementById('imageFile');
         const fileNameDiv = document.getElementById('fileName');
         const scaleButtonsContainer = document.getElementById('scaleButtons');

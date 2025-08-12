@@ -26,27 +26,36 @@
         <div class="flex-1 p-10">
             <h2 class="text-3xl font-bold mb-6">Analytics Overview</h2>
             
-            <% if (typeof error !== 'undefined' && error) { %>
+            <% if (error) { %>
                 <div class="bg-red-500/20 text-red-300 p-4 rounded-lg mb-6"><%= error %></div>
             <% } %>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                 <div class="bg-gray-800 p-6 rounded-lg"><p class="text-gray-400">Total Users</p><p class="text-3xl font-bold"><%= totalUsers %></p></div>
-                <div class="bg-gray-800 p-6 rounded-lg"><p class="text-gray-400">Total Feedback Entries</p><p class="text-3xl font-bold"><%= totalFeedback %></p></div>
+                <div class="bg-gray-800 p-6 rounded-lg"><p class="text-gray-400">Total Upscales</p><p class="text-3xl font-bold"><%= totalUpscales %></p></div>
             </div>
 
-            <div class="bg-gray-800 p-6 rounded-lg">
-                <h3 class="text-xl font-bold mb-4">User Feedback</h3>
-                <div class="max-w-sm mx-auto">
-                    <canvas id="feedbackChart"></canvas>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="bg-gray-800 p-6 rounded-lg">
+                    <h3 class="text-xl font-bold mb-4">User Feedback</h3>
+                    <div class="max-w-xs mx-auto">
+                        <canvas id="feedbackChart"></canvas>
+                    </div>
+                </div>
+                <div class="bg-gray-800 p-6 rounded-lg">
+                    <h3 class="text-xl font-bold mb-4">Model Usage</h3>
+                    <div>
+                        <canvas id="modelUsageChart"></canvas>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        const ctx = document.getElementById('feedbackChart').getContext('2d');
-        new Chart(ctx, {
+        // Feedback Pie Chart
+        const feedbackCtx = document.getElementById('feedbackChart').getContext('2d');
+        new Chart(feedbackCtx, {
             type: 'pie',
             data: {
                 labels: ['Liked', 'Disliked'],
@@ -60,14 +69,32 @@
             },
             options: {
                 responsive: true,
-                plugins: {
-                    legend: {
-                        position: 'top',
-                        labels: {
-                            color: '#D1D5DB'
-                        }
-                    }
-                }
+                plugins: { legend: { position: 'top', labels: { color: '#D1D5DB' } } }
+            }
+        });
+
+        // Model Usage Bar Chart
+        const modelCtx = document.getElementById('modelUsageChart').getContext('2d');
+        new Chart(modelCtx, {
+            type: 'bar',
+            data: {
+                labels: ['EDSR', 'Real-ESRGAN', 'SwinIR'],
+                datasets: [{
+                    label: 'Times Used',
+                    data: [<%= edsrCount %>, <%= realesrganCount %>, <%= swinirCount %>],
+                    backgroundColor: ['#8B5CF6', '#3B82F6', '#EC4899'],
+                    borderColor: '#1F2937',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                scales: {
+                    x: { ticks: { color: '#9CA3AF' }, grid: { color: '#374151' } },
+                    y: { ticks: { color: '#9CA3AF' }, grid: { color: '#374151' } }
+                },
+                plugins: { legend: { display: false } }
             }
         });
     </script>

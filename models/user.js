@@ -19,7 +19,11 @@ const userSchema = mongoose.Schema({
         default: false
     },
     imageHistory: [{
-        path: {
+        originalPath: { // This was missing
+            type: String,
+            required: true
+        },
+        upscaledPath: { // This was also missing
             type: String, 
             required: true
         },

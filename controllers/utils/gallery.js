@@ -1,4 +1,5 @@
 const userModel = require('../../models/user');
+const feedbackModel = require('../../models/feedback');
 
 async function handleGallery(req, res) {
     try {
@@ -6,10 +7,13 @@ async function handleGallery(req, res) {
         if (!user) {
             return res.redirect('/user/login');
         }
-        console.log(user.imageHistory.reverse())
+
+        const feedback = await feedbackModel.find({ userId: req.user.id }).lean();
+
         res.render('gallery', {
             user: user,
-            images: user.imageHistory.reverse(), 
+            images: user.imageHistory.reverse(),
+            feedback: feedback,
             error: null
         });
 
@@ -18,6 +22,7 @@ async function handleGallery(req, res) {
         res.render('gallery', {
             user: { name: 'Guest' },
             images: [],
+            feedback: [],
             error: "Could not load your gallery."
         });
     }

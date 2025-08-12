@@ -2,7 +2,7 @@ const path = require('path');
 const fs = require('fs'); 
 const sharp = require('sharp'); 
 const { spawn } = require('child_process');
-const userModel = require("../../models/user")
+const userModel = require("../../models/user");
 
 const IMAGES_DIR = path.join(__dirname, '../../public/images/');
 const LOG_FILE_PATH = path.join(__dirname, '../../log.txt');
@@ -24,7 +24,7 @@ async function handleUpload(req, res) {
         }
         
         const { modelType, scale } = req.body;
-        const pythonScriptPath = path.join(__dirname, '..', '..', 'python_scripts', 'main.py');
+        const pythonScriptPath = path.join(__dirname, '../../python_scripts/main.py');
         const outputFilename = `upscaled-${req.file.filename}`;
         const outputPath = path.join(IMAGES_DIR, outputFilename);
         
@@ -44,7 +44,6 @@ async function handleUpload(req, res) {
 
         pythonProcess.on('close', async (code) => {
             console.log(`[Node Log] Python script finished with exit code ${code}`);
-            
             if (code !== 0) {
                 if (fs.existsSync(req.file.path)) fs.unlinkSync(req.file.path);
                 return res.redirect(`/upload?error=${encodeURIComponent("An error occurred during image processing.")}`);
@@ -53,7 +52,8 @@ async function handleUpload(req, res) {
                 await userModel.findByIdAndUpdate(req.user.id, {
                     $push: {
                         imageHistory: {
-                            path: outputFilename 
+                            originalPath: req.file.filename, 
+                            upscaledPath: outputFilename     
                         }
                     }
                 });

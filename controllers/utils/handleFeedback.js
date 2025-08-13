@@ -1,38 +1,35 @@
-const feedbackModel = require('../../models/feedback');
+const userModel = require('../../models/user');
 
 async function handleFeedback(req, res) {
     try {
         const {
-            originalImageFilename,
             upscaledImageFilename,
-            modelUsed,
-            scaleFactor,
-            likedResult,
-            originalQuery
+            likedResult
         } = req.body;
 
         if (!req.user || !req.user.id) {
-            return res.redirect(`/upload?error=${encodeURIComponent("Authentication error.")}`);
+            return res.status(401).send("Authentication error.");
         }
 
-        await feedbackModel.create({
-            userId: req.user.id,
-            originalImageFilename,
-            upscaledImageFilename,
-            modelUsed,
-            scaleFactor,
-            likedResult: likedResult === 'yes'
-        });
+        const result = await userModel.updateOne(
+            { 
+                _id: req.user.id, 
+                'imageHistory.upscaledPath': upscaledImageFilename 
+            },
+            { 
+                $set: { 'imageHistory.$.likedResult': likedResult === 'yes' }
+            }
+        );
 
-        const feedbackStatus = likedResult === 'yes' ? 'thankyou' : 'showReupscale';
-        
-        const redirectUrl = `/upload/result?${originalQuery}&feedback=${feedbackStatus}`;
+        if (result.nModified === 0) {
+            return res.status(404).send("Could not find the image in your history to update.");
+        }
 
-        return res.redirect(redirectUrl);
+        return res.status(200).send("Feedback saved.");
 
     } catch (error) {
         console.error("Error handling feedback:", error);
-        return res.redirect(`/upload?error=${encodeURIComponent("Could not save your feedback.")}`);
+        return res.status(500).send("Could not save your feedback.");
     }
 }
 

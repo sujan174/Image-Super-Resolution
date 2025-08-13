@@ -102,3 +102,77 @@ node index.js
 ```
 The app will be available at: http://localhost:8000
 
+## Image Upscaling Models
+
+This project supports **multiple state-of-the-art AI super-resolution models** — **EDSR**, **Real-ESRGAN**, and **SwinIR** — each offering different trade-offs between speed, quality, and computational requirements.  
+
+---
+
+### 1. EDSR (Enhanced Deep Super-Resolution Network)
+**Paper:** [Enhanced Deep Residual Networks for Single Image Super-Resolution](https://arxiv.org/abs/1707.02921)  
+**Best for:** High-quality results on clean, non-noisy images.  
+
+**Key Features:**
+- Deep residual blocks without batch normalization for better accuracy.
+- Highly effective for **photographic images** where sharpness is critical.
+- Produces **less noise** than many GAN-based methods.
+
+**Advantages:**
+- High PSNR and SSIM (great for fidelity to the original image).
+- Minimal artifacts.
+
+**Limitations:**
+- Slower than lighter models. (EDSR-base is beign used in this project)
+- Does not handle heavy noise well.
+
+---
+
+### 2. Real-ESRGAN
+**Paper:** [Real-ESRGAN: Training Real-World Blind Super-Resolution with Pure Synthetic Data](https://arxiv.org/abs/2107.10833)  
+**Best for:** Upscaling real-world images with noise, JPEG artifacts, or compression damage.  
+
+**Key Features:**
+- Improves on ESRGAN by adding **realistic degradations** to training data.
+- Handles **noise, blur, and compression artifacts**.
+- Suitable for **old photos**, **low-quality camera shots**, and **screenshots**.
+- Supports **general-purpose image restoration**.
+
+**Advantages:**
+- Great for **restoration + upscaling** in one step.
+- Better results for low-quality or damaged images.
+
+**Limitations:**
+- Slightly softer results on very clean images.
+- Can be slower on very large inputs.
+
+---
+
+### 3. SwinIR (Swin Transformer for Image Restoration)
+**Paper:** [SwinIR: Image Restoration Using Swin Transformer](https://arxiv.org/abs/2108.10257)  
+**Best for:** Top-tier quality across a wide range of restoration tasks, especially high-resolution images.  
+
+**Key Features:**
+- Based on **Swin Transformer** architecture for powerful context modeling.
+- Works well for **super-resolution, denoising, and JPEG artifact removal**.
+- Captures **long-range dependencies** for better detail synthesis.
+
+**Advantages:**
+- State-of-the-art benchmark results.
+- Handles clean and degraded images effectively.
+- Preserves textures and details better than most CNN-based methods.
+
+**Limitations:**
+- Requires more VRAM and compute.
+- Slower inference compared to lighter models.
+
+---
+
+### Model Selection Guide
+
+| Model         | Best For                             | Speed        | Detail Preservation |
+|---------------|--------------------------------------|--------------|---------------------|
+| **EDSR**      | Clean, high-quality images           | Medium       | ★★★☆☆               |
+| **Real-ESRGAN**| Noisy, compressed, low-quality imgs | Medium-Slow  | ★★★★☆               | 
+| **SwinIR**    | High-res, mixed degradation          | Slow         | ★★★★★+              |
+
+

@@ -55,11 +55,24 @@
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" /></svg>
                                 </button>
                             </div>
-                            <select name="modelType" class="w-full px-4 py-3 bg-gray-900/60 border border-gray-700 rounded-lg">
-                                <option value="EDSR">EDSR</option>
-                                <option value="RealESRGAN">RealESRGAN</option>
-                                <option value="SwinIR">SwinIR</option>
-                            </select>
+                            <div class="relative" id="custom-select-wrapper">
+                                <select name="modelType" id="modelType" class="hidden">
+                                    <option value="EDSR">EDSR</option>
+                                    <option value="RealESRGAN">RealESRGAN</option>
+                                    <option value="SwinIR">SwinIR</option>
+                                </select>
+                                <div id="custom-select-trigger" class="flex items-center justify-between w-full px-4 py-3 bg-gray-900/60 border border-gray-700 rounded-lg cursor-pointer">
+                                    <span id="custom-select-value">EDSR</span>
+                                    <svg class="w-5 h-5 text-gray-400" id="custom-select-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                </div>
+                                <div id="custom-select-options" class="absolute z-10 w-full mt-2 bg-gray-900 border border-gray-700 rounded-lg shadow-lg hidden">
+                                    <div class="p-1">
+                                        <div class="custom-option p-2 rounded-md hover:bg-purple-600 cursor-pointer" data-value="EDSR">EDSR</div>
+                                        <div class="custom-option p-2 rounded-md hover:bg-purple-600 cursor-pointer" data-value="RealESRGAN">Real-ESRGAN</div>
+                                        <div class="custom-option p-2 rounded-md hover:bg-purple-600 cursor-pointer" data-value="SwinIR">SwinIR</div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
                         <div>
@@ -86,6 +99,32 @@
                     </div>
                 </form>
             </div>
+        </div>
+    </div>
+    
+    <div id="info-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center hidden z-50">
+        <div class="bg-gray-800 rounded-2xl shadow-xl border border-gray-700 p-8 w-full max-w-md">
+            <h2 class="text-2xl font-bold mb-4">Model Explanations</h2>
+            <div class="space-y-4 text-gray-300">
+                <div>
+                    <h3 class="font-bold text-purple-400">EDSR - The Faithful Upscaler</h3>
+                    <p class="text-sm">Excellent for clean upscaling. It focuses on enhancing existing details to make them sharper and clearer while staying true to the original. Ideal for high-quality photos and digital art.</p>
+                </div>
+                <div>
+                    <h3 class="font-bold text-purple-400">Real-ESRGAN - The Restorer</h3>
+                    <p class="text-sm">A powerful generative model that excels at restoring old or compressed photos. It can creatively "hallucinate" and add new, plausible details where the original information was lost.</p>
+                </div>
+                <div>
+                    <h3 class="font-bold text-purple-400">SwinIR - The Detail Expert</h3>
+                    <p class="text-sm">A state-of-the-art Transformer-based model. It's exceptionally good at reconstructing realistic, fine-grained textures like skin, fabric, or hair, producing very natural results.</p>
+                </div>
+            </div>
+            <p class="text-xs text-gray-500 mt-6 pt-4 border-t border-gray-700 italic">
+                Disclaimer: This app uses smaller versions of these models and might not perform as well as the full-sized originals.
+            </p>
+            <button id="close-modal-btn" class="mt-4 w-full bg-gray-600 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded-lg">
+                Close
+            </button>
         </div>
     </div>
     
@@ -136,6 +175,36 @@
         const fileNameDiv = document.getElementById('fileName');
         const scaleButtonsContainer = document.getElementById('scaleButtons');
         const scaleInput = document.getElementById('scale');
+        const infoBtn = document.getElementById('info-btn');
+        const infoModal = document.getElementById('info-modal');
+        const closeModalBtn = document.getElementById('close-modal-btn');
+        const selectWrapper = document.getElementById('custom-select-wrapper');
+        const selectTrigger = document.getElementById('custom-select-trigger');
+        const selectValue = document.getElementById('custom-select-value');
+        const selectOptions = document.getElementById('custom-select-options');
+        const selectArrow = document.getElementById('custom-select-arrow');
+        const nativeSelect = document.getElementById('modelType');
+
+        infoBtn.addEventListener('click', () => infoModal.classList.remove('hidden'));
+        closeModalBtn.addEventListener('click', () => infoModal.classList.add('hidden'));
+
+        selectTrigger.addEventListener('click', () => {
+            selectOptions.classList.toggle('hidden');
+        });
+
+        selectOptions.addEventListener('click', (e) => {
+            if (e.target.classList.contains('custom-option')) {
+                selectValue.textContent = e.target.dataset.value;
+                nativeSelect.value = e.target.dataset.value;
+                selectOptions.classList.add('hidden');
+            }
+        });
+        
+        document.addEventListener('click', (e) => {
+            if (!selectWrapper.contains(e.target)) {
+                selectOptions.classList.add('hidden');
+            }
+        });
 
         imageFileInput.addEventListener('change', () => {
             fileNameDiv.textContent = imageFileInput.files.length > 0 ? imageFileInput.files[0].name : '';

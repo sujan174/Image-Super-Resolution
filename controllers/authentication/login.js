@@ -4,8 +4,8 @@ const bcrypt = require("bcrypt");
 
 async function handleLogin(req, res) {
     try {
-        const { email, password } = req.body;
-
+        const password = req.body.password;
+        const email = req.body.email.toLowerCase();
         const user = await userModel.findOne({ email: email });
 
         if (!user) {

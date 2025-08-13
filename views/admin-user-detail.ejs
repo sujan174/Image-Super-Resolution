@@ -41,11 +41,8 @@
 
                 <h3 class="text-2xl font-bold mb-4 mt-8">Upscale History (<%= user.imageHistory.length %>)</h3>
                 
-                <% const feedbackMap = new Map(feedback.map(f => [f.upscaledImageFilename, f])); %>
-
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     <% user.imageHistory.reverse().forEach(historyItem => { %>
-                        <% const itemFeedback = feedbackMap.get(historyItem.upscaledPath); %>
                         <div class="bg-gray-800 rounded-lg overflow-hidden shadow-lg">
                             <div class="image-comparison-container bg-black h-64">
                                 <img-comparison-slider>
@@ -54,19 +51,17 @@
                                 </img-comparison-slider>
                             </div>
                             <div class="p-4">
-                                <% if (itemFeedback) { %>
-                                    <p class="text-sm"><span class="font-semibold">Model:</span> <%= itemFeedback.modelUsed %></p>
-                                    <p class="text-sm"><span class="font-semibold">Scale:</span> <%= itemFeedback.scaleFactor %>x</p>
-                                    <p class="text-sm"><span class="font-semibold">Liked:</span> 
-                                        <% if (itemFeedback.likedResult) { %>
-                                            <span class="text-green-400">Yes</span>
-                                        <% } else { %>
-                                            <span class="text-red-400">No</span>
-                                        <% } %>
-                                    </p>
-                                <% } else { %>
-                                    <p class="text-sm text-gray-500 italic">No feedback submitted for this image.</p>
-                                <% } %>
+                                <p class="text-sm"><span class="font-semibold">Model:</span> <%= historyItem.modelUsed %></p>
+                                <p class="text-sm"><span class="font-semibold">Scale:</span> <%= historyItem.scaleFactor %>x</p>
+                                <p class="text-sm"><span class="font-semibold">Liked:</span> 
+                                    <% if (historyItem.likedResult === true) { %>
+                                        <span class="text-green-400">Yes</span>
+                                    <% } else if (historyItem.likedResult === false) { %>
+                                        <span class="text-red-400">No</span>
+                                    <% } else { %>
+                                        <span class="text-gray-500 italic">N/A</span>
+                                    <% } %>
+                                </p>
                                 <div class="mt-4 flex gap-2">
                                     <a href="/images/<%= historyItem.originalPath %>" download class="flex-1 text-center text-xs bg-gray-700 hover:bg-gray-600 text-gray-300 font-semibold py-2 px-3 rounded-lg">
                                         Download Original

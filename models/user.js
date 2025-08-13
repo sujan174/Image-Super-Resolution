@@ -15,7 +15,7 @@ const userSchema = mongoose.Schema({
         required: true,
     },
     admin:{
-        type:Boolean,
+        type: Boolean,
         default: false
     },
     imageHistory: [{
@@ -34,6 +34,10 @@ const userSchema = mongoose.Schema({
         scaleFactor: {
             type: Number,
             required: true
+        },
+        likedResult: {
+            type: Boolean,
+            default: null 
         },
         time: {
             type: Date,

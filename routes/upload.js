@@ -35,9 +35,7 @@ router.get('/', checkForAuthentication, async (req, res) => {
 });
 
 router.post('/', checkForAuthentication, upload.single('imageFile'), handleUpload);
-
 router.post('/feedback', checkForAuthentication, handleFeedback);
-
 router.get('/result', handleResult);
 
 module.exports = router;

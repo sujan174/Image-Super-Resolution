@@ -4,7 +4,8 @@ const bcrypt = require("bcrypt");
 
 async function handleSignup(req, res) {
     try {
-        const { name, email, password } = req.body;
+        const { name, password } = req.body;
+        const email = req.body.email.toLowerCase();
 
         const existingUser = await userModel.findOne({ email: email });
         if (existingUser) {
@@ -14,7 +15,7 @@ async function handleSignup(req, res) {
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
-
+        
         const newUser = await userModel.create({
             name: name,
             email: email,

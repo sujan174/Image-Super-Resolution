@@ -1,30 +1,38 @@
 const userModel = require('../../models/user');
-const feedbackModel = require('../../models/feedback');
-const archiver = require("archiver");
 
 async function handleAdminDashboard(req, res) {
     try {
         const users = await userModel.find({}).lean();
-        const feedback = await feedbackModel.find({}).lean();
         
-        const totalUpscales = users.reduce((sum, user) => sum + (user.imageHistory ? user.imageHistory.length : 0), 0);
-        
-        const likedCount = feedback.filter(f => f.likedResult).length;
-        const dislikedCount = feedback.length - likedCount;
+        let totalUpscales = 0;
+        let likedCount = 0;
+        let dislikedCount = 0;
+        const modelUsage = { EDSR: 0, RealESRGAN: 0, SwinIR: 0 };
 
-        const modelUsage = feedback.reduce((acc, item) => {
-            acc[item.modelUsed] = (acc[item.modelUsed] || 0) + 1;
-            return acc;
-        }, {});
+        users.forEach(user => {
+            if (user.imageHistory) {
+                totalUpscales += user.imageHistory.length;
+                user.imageHistory.forEach(item => {
+                    if (item.likedResult === true) {
+                        likedCount++;
+                    } else if (item.likedResult === false) {
+                        dislikedCount++;
+                    }
+                    if (item.modelUsed in modelUsage) {
+                        modelUsage[item.modelUsed]++;
+                    }
+                });
+            }
+        });
 
         res.render('admin-dashboard', {
             totalUsers: users.length,
-            totalUpscales: totalUpscales,
+            totalUpscales,
             likedCount,
             dislikedCount,
-            edsrCount: modelUsage['EDSR'] || 0,
-            realesrganCount: modelUsage['RealESRGAN'] || 0,
-            swinirCount: modelUsage['SwinIR'] || 0,
+            edsrCount: modelUsage.EDSR,
+            realesrganCount: modelUsage.RealESRGAN,
+            swinirCount: modelUsage.SwinIR,
             error: null
         });
 
@@ -57,17 +65,16 @@ async function handleGetUserDetail(req, res) {
     try {
         const userId = req.params.id;
         const user = await userModel.findById(userId).lean();
-        const feedback = await feedbackModel.find({ userId: userId }).lean();
 
         if (!user) {
-            return res.render('admin-user-detail', { user: null, feedback: [], error: "User not found." });
+            return res.render('admin-user-detail', { user: null, error: "User not found." });
         }
 
-        res.render('admin-user-detail', { user, feedback, error: null });
+        res.render('admin-user-detail', { user, error: null });
 
     } catch (error) {
         console.error("Error fetching user details:", error);
-        res.render('admin-user-detail', { user: null, feedback: [], error: "Could not load user details." });
+        res.render('admin-user-detail', { user: null, error: "Could not load user details." });
     }
 }
 
@@ -76,10 +83,23 @@ async function handleAdminFeedbackView(req, res) {
         const { status } = req.query;
         const likedResult = status === 'liked';
         
-        const feedback = await feedbackModel.find({ likedResult: likedResult }).populate('userId', 'name');
+        const usersWithFeedback = await userModel.find({ 'imageHistory.likedResult': likedResult }).lean();
+        
+        const feedbackItems = usersWithFeedback.flatMap(user => 
+            user.imageHistory
+                .filter(item => item.likedResult === likedResult)
+                .map(item => ({ 
+                    ...item, 
+                    userName: user.name,
+                    originalImageFilename: item.originalPath,
+                    upscaledImageFilename: item.upscaledPath,
+                    modelUsed: item.modelUsed,
+                    scaleFactor: item.scaleFactor
+                }))
+        );
         
         res.render('admin-feedback', {
-            feedback,
+            feedback: feedbackItems,
             title: likedResult ? 'Liked Images' : 'Disliked Images',
             error: null
         });
@@ -100,4 +120,3 @@ module.exports = {
     handleGetUserDetail,
     handleAdminFeedbackView,
 };
-

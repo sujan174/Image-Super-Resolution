@@ -26,6 +26,7 @@ async function handleAdminDashboard(req, res) {
         });
 
         res.render('admin-dashboard', {
+            user: req.user,
             totalUsers: users.length,
             totalUpscales,
             likedCount,
@@ -39,6 +40,7 @@ async function handleAdminDashboard(req, res) {
     } catch (error) {
         console.error("Error fetching admin dashboard data:", error);
         res.render('admin-dashboard', {
+            user: req.user,
             totalUsers: 0,
             totalUpscales: 0,
             likedCount: 0,
@@ -54,27 +56,27 @@ async function handleAdminDashboard(req, res) {
 async function handleGetAllUsers(req, res) {
     try {
         const users = await userModel.find({}).lean();
-        res.render('admin-users', { users, error: null });
+        res.render('admin-users', { user: req.user, users, error: null });
     } catch (error) {
         console.error("Error fetching users:", error);
-        res.render('admin-users', { users: [], error: "Could not load user data." });
+        res.render('admin-users', { user: req.user, users: [], error: "Could not load user data." });
     }
 }
 
 async function handleGetUserDetail(req, res) {
     try {
         const userId = req.params.id;
-        const user = await userModel.findById(userId).lean();
+        const viewedUser = await userModel.findById(userId).lean();
 
-        if (!user) {
-            return res.render('admin-user-detail', { user: null, error: "User not found." });
+        if (!viewedUser) {
+            return res.render('admin-user-detail', { user: req.user, viewedUser: null, error: "User not found." });
         }
 
-        res.render('admin-user-detail', { user, error: null });
+        res.render('admin-user-detail', { user: req.user, viewedUser: viewedUser, error: null });
 
     } catch (error) {
         console.error("Error fetching user details:", error);
-        res.render('admin-user-detail', { user: null, error: "Could not load user details." });
+        res.render('admin-user-detail', { user: req.user, viewedUser: null, error: "Could not load user details." });
     }
 }
 
@@ -91,14 +93,12 @@ async function handleAdminFeedbackView(req, res) {
                 .map(item => ({ 
                     ...item, 
                     userName: user.name,
-                    originalImageFilename: item.originalPath,
-                    upscaledImageFilename: item.upscaledPath,
-                    modelUsed: item.modelUsed,
-                    scaleFactor: item.scaleFactor
+                    upscaledImageFilename: item.upscaledPath
                 }))
         );
         
         res.render('admin-feedback', {
+            user: req.user,
             feedback: feedbackItems,
             title: likedResult ? 'Liked Images' : 'Disliked Images',
             error: null
@@ -107,6 +107,7 @@ async function handleAdminFeedbackView(req, res) {
     } catch (error) {
         console.error("Error fetching feedback data:", error);
         res.render('admin-feedback', {
+            user: req.user,
             feedback: [],
             title: 'Error',
             error: "Could not load feedback data."

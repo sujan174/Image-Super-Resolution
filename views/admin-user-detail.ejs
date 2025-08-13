@@ -34,45 +34,49 @@
         </div>
 
         <div class="flex-1 p-10">
-            <% if (user) { %>
+            <% if (viewedUser) { %>
                 <a href="/user/admin/users" class="text-purple-400 hover:underline mb-4 inline-block">&larr; Back to Users</a>
-                <h2 class="text-3xl font-bold mb-2"><%= user.name %></h2>
-                <p class="text-gray-400 mb-6"><%= user.email %></p>
+                <h2 class="text-3xl font-bold mb-2"><%= viewedUser.name %></h2>
+                <p class="text-gray-400 mb-6"><%= viewedUser.email %></p>
 
-                <h3 class="text-2xl font-bold mb-4 mt-8">Upscale History (<%= user.imageHistory.length %>)</h3>
+                <h3 class="text-2xl font-bold mb-4 mt-8">Upscale History (<%= viewedUser.imageHistory ? viewedUser.imageHistory.length : 0 %>)</h3>
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <% user.imageHistory.reverse().forEach(historyItem => { %>
-                        <div class="bg-gray-800 rounded-lg overflow-hidden shadow-lg">
-                            <div class="image-comparison-container bg-black h-64">
-                                <img-comparison-slider>
-                                    <img slot="first" src="/images/<%= historyItem.originalPath %>" alt="Original Image" style="object-fit: cover; width: 100%; height: 100%;">
-                                    <img slot="second" src="/images/<%= historyItem.upscaledPath %>" alt="Upscaled Image" style="object-fit: cover; width: 100%; height: 100%;">
-                                </img-comparison-slider>
-                            </div>
-                            <div class="p-4">
-                                <p class="text-sm"><span class="font-semibold">Model:</span> <%= historyItem.modelUsed %></p>
-                                <p class="text-sm"><span class="font-semibold">Scale:</span> <%= historyItem.scaleFactor %>x</p>
-                                <p class="text-sm"><span class="font-semibold">Liked:</span> 
-                                    <% if (historyItem.likedResult === true) { %>
-                                        <span class="text-green-400">Yes</span>
-                                    <% } else if (historyItem.likedResult === false) { %>
-                                        <span class="text-red-400">No</span>
-                                    <% } else { %>
-                                        <span class="text-gray-500 italic">N/A</span>
-                                    <% } %>
-                                </p>
-                                <div class="mt-4 flex gap-2">
-                                    <a href="/images/<%= historyItem.originalPath %>" download class="flex-1 text-center text-xs bg-gray-700 hover:bg-gray-600 text-gray-300 font-semibold py-2 px-3 rounded-lg">
-                                        Download Original
-                                    </a>
-                                    <a href="/images/<%= historyItem.upscaledPath %>" download class="flex-1 text-center text-xs bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-3 rounded-lg">
-                                        Download Upscaled
-                                    </a>
+                    <% if (viewedUser.imageHistory && viewedUser.imageHistory.length > 0) { %>
+                        <% viewedUser.imageHistory.reverse().forEach(historyItem => { %>
+                            <div class="bg-gray-800 rounded-lg overflow-hidden shadow-lg">
+                                <div class="image-comparison-container bg-black h-64">
+                                    <img-comparison-slider>
+                                        <img slot="first" src="/images/<%= historyItem.originalPath %>" alt="Original Image" style="object-fit: cover; width: 100%; height: 100%;">
+                                        <img slot="second" src="/images/<%= historyItem.upscaledPath %>" alt="Upscaled Image" style="object-fit: cover; width: 100%; height: 100%;">
+                                    </img-comparison-slider>
+                                </div>
+                                <div class="p-4">
+                                    <p class="text-sm"><span class="font-semibold">Model:</span> <%= historyItem.modelUsed %></p>
+                                    <p class="text-sm"><span class="font-semibold">Scale:</span> <%= historyItem.scaleFactor %>x</p>
+                                    <p class="text-sm"><span class="font-semibold">Liked:</span> 
+                                        <% if (historyItem.likedResult === true) { %>
+                                            <span class="text-green-400">Yes</span>
+                                        <% } else if (historyItem.likedResult === false) { %>
+                                            <span class="text-red-400">No</span>
+                                        <% } else { %>
+                                            <span class="text-gray-500 italic">N/A</span>
+                                        <% } %>
+                                    </p>
+                                    <div class="mt-4 flex gap-2">
+                                        <a href="/images/<%= historyItem.originalPath %>" download class="flex-1 text-center text-xs bg-gray-700 hover:bg-gray-600 text-gray-300 font-semibold py-2 px-3 rounded-lg">
+                                            Download Original
+                                        </a>
+                                        <a href="/images/<%= historyItem.upscaledPath %>" download class="flex-1 text-center text-xs bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-3 rounded-lg">
+                                            Download Upscaled
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    <% }); %>
+                        <% }); %>
+                    <% } else { %>
+                        <p class="col-span-full text-center text-gray-500 py-10">This user has no upscale history.</p>
+                    <% } %>
                 </div>
             <% } else { %>
                 <p class="text-red-400"><%= error %></p>

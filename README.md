@@ -9,7 +9,7 @@
 ---
 
 ## Features  
-- **Secure User Authentication** – Full login/signup system using **JWT** and cookies.  
+- **Secure User Authentication** –  Full login/signup system using JWT and cookies, now with Sign in with Google support.
 - **Multiple AI Models** – Choose between **EDSR**, **Real-ESRGAN**, and **SwinIR** for upscaling.  
 - **Variable Scaling** – Upscale images by **2x**, **3x**, or **4x**.  
 - **Interactive Result Viewer** – Compare **Before & After** with a smooth slider.  
@@ -21,8 +21,9 @@
 - **User Feedback System** Collect user ratings on the quality of the upscaled images.
 - **Advanced Admin Dashboard**
 - Analytics View: Charts showing total users, total upscales, model usage, and user feedback (liked vs. disliked).
-  -   User Management: A complete list of all users with the ability to view their detailed history.
-  -   Feedback Viewer: Pages to view all liked or disliked images, with the ability to download them in bulk as a zip file.
+  - Analytics View: Charts showing total users, total upscales, model usage, and user feedback (liked vs. disliked).
+  - User Management: A complete list of all users with the ability to view their detailed history.
+  - Feedback Viewer: Pages to view all liked or disliked images, with the ability to download them in bulk as a zip file for further analysis or model training.
 ---
 
 ## Tech Stack  
@@ -95,6 +96,9 @@ pip install -r requirements.txt
 Create a .env file in the root directory:
 ```bash
 JWT_SECRET="your_super_secret_jwt_key"
+# If OAuth is not require you can remove passport.js and OAuth routes
+CLIENT_ID="your_client_id
+CLIENT_SECRET="your_client_secret"
 ```
 6. Run the server
 ```bash
@@ -174,5 +178,7 @@ This project supports **multiple state-of-the-art AI super-resolution models** �
 | **EDSR**      | Clean, high-quality images           | Medium       | ★★★☆☆               |
 | **Real-ESRGAN**| Noisy, compressed, low-quality imgs | Medium-Slow  | ★★★★☆               | 
 | **SwinIR**    | High-res, mixed degradation          | Slow         | ★★★★★+              |
+
+
 
 

@@ -2,3 +2,8 @@ torch
 Pillow
 numpy
 transformers
+torch 
+PIL
+signal
+super_image
+gc

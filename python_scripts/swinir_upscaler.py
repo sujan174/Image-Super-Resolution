@@ -1,23 +1,31 @@
+import gc
+import os
+import traceback
+from datetime import datetime
+
+import numpy as np
 import torch
 from PIL import Image
-import os
-import numpy as np
-import gc
 from transformers import Swin2SRForImageSuperResolution, Swin2SRImageProcessor
-from datetime import datetime
-import traceback
+
 
 class ImageUpscaler:
-    def __init__(self, model_type: str, scale: int, model_name: str = None, log_file_path: str = None):
+    
+    def __init__(self, model_type: str, scale: int, model_name: str = None,
+                 log_file_path: str = None):
         self.model = None
         self.processor = None
         self.scale = scale
         self.log_file_path = log_file_path
-        self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+        self.device = torch.device(
+            'cuda' if torch.cuda.is_available() else 'cpu'
+        )
         self._log(f"Using device: {self.device}")
 
         if model_type.upper() not in ['SWINIR', 'SWIN2SR']:
-            raise ValueError("This wrapper is specifically for SwinIR/Swin2SR models.")
+            raise ValueError(
+                "This wrapper is specifically for SwinIR/Swin2SR models."
+            )
         if not model_name:
             model_name = f'caidas/swin2SR-classical-sr-x{scale}-64'
 
@@ -30,10 +38,17 @@ class ImageUpscaler:
                 f.write(f"{timestamp} - [Python:SwinIR] {message}\n")
 
     def _load_model(self, model_name: str):
-        self._log(f"Loading Swin2SR model: '{model_name}' for {self.scale}x upscaling...")
+        self._log(
+            f"Loading Swin2SR model: '{model_name}' for "
+            f"{self.scale}x upscaling..."
+        )
         try:
-            self.model = Swin2SRForImageSuperResolution.from_pretrained(model_name)
-            self.processor = Swin2SRImageProcessor.from_pretrained(model_name)
+            self.model = Swin2SRForImageSuperResolution.from_pretrained(
+                model_name
+            )
+            self.processor = Swin2SRImageProcessor.from_pretrained(
+                model_name
+            )
             self.model.to(self.device)
             self.model.eval()
             self._log("Model loaded successfully.")
@@ -44,22 +59,29 @@ class ImageUpscaler:
 
     def upscale_image(self, image_path: str):
         if not self.model or not self.processor:
-            self._log("ERROR: Model or processor is not loaded, cannot upscale.")
+            self._log(
+                "ERROR: Model or processor is not loaded, cannot upscale."
+            )
             return None
             
         try:
             self._log(f"Opening image: {image_path}")
             image = Image.open(image_path).convert('RGB')
-            inputs = self.processor(image, return_tensors="pt").to(self.device)
+            inputs = self.processor(
+                image, return_tensors="pt"
+            ).to(self.device)
 
             self._log("Performing model inference...")
             with torch.no_grad():
                 outputs = self.model(**inputs)
             self._log("Inference complete.")
 
-            output = outputs.reconstruction.data.squeeze().float().cpu().clamp_(0, 1).numpy()
+            output = outputs.reconstruction.data.squeeze().float().cpu()
+            output = output.clamp_(0, 1).numpy()
             output = np.moveaxis(output, source=0, destination=-1)
-            output_image = Image.fromarray((output * 255.0).round().astype(np.uint8))
+            output_image = Image.fromarray(
+                (output * 255.0).round().astype(np.uint8)
+            )
             
             return output_image
 

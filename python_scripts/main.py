@@ -82,7 +82,7 @@ def main():
             upscaler = None
             if model_type == 'RealESRGAN':
                 model_identifier = os.path.join(
-                    script_dir, 'python_scripts/models/RealESRGAN x4plus.pth'
+                    script_dir, './models/RealESRGAN x4plus.pth'
                 )
                 upscaler = UpscalerClass(
                     model_type=model_type, scale=4, model_path=model_identifier

@@ -1,13 +1,22 @@
 import torch
-from PIL import Image
 import gc
-import numpy as np
-from super_image import EdsrModel, ImageLoader
-from datetime import datetime
 import traceback
+import numpy as np
+from PIL import Image
+from datetime import datetime
+from typing import Optional
+from super_image import EdsrModel, ImageLoader
+
 
 class ImageUpscaler:
-    def __init__(self, model_type: str, scale: int, model_name: str = None, log_file_path: str = None):
+
+    def __init__(
+        self,
+        model_type: str,
+        scale: int,
+        model_name: str = None,
+        log_file_path: Optional[str] = None
+    ):
         self.model = None
         self.scale = scale
         self.log_file_path = log_file_path
@@ -21,11 +30,14 @@ class ImageUpscaler:
 
         self._load_model(model_name)
 
-    def _log(self, message):
+    def _log(self, message: str):
         if self.log_file_path:
             timestamp = datetime.now().isoformat()
-            with open(self.log_file_path, 'a') as f:
-                f.write(f"{timestamp} - [Python:EDSR] {message}\n")
+            try:
+                with open(self.log_file_path, 'a') as f:
+                    f.write(f"{timestamp} - [Python:EDSR] {message}\n")
+            except IOError as e:
+                print(f"Failed to write to log file: {e}", file=sys.stderr)
 
     def _load_model(self, model_name: str):
         self._log(f"Loading EDSR model: '{model_name}' for {self.scale}x upscaling...")
@@ -34,16 +46,16 @@ class ImageUpscaler:
             self.model.to(self.device)
             self.model.eval()
             self._log("Model loaded successfully.")
-        except Exception as e:
+        except Exception:
             self._log(f"FATAL ERROR loading model '{model_name}'.")
             self._log(traceback.format_exc())
             raise
 
-    def upscale_image(self, image_path: str):
+    def upscale_image(self, image_path: str) -> Optional[Image.Image]:
         if not self.model:
             self._log("ERROR: Model is not loaded, cannot upscale.")
             return None
-            
+
         try:
             self._log(f"Opening image: {image_path}")
             image = Image.open(image_path).convert('RGB')
@@ -57,10 +69,10 @@ class ImageUpscaler:
             output_tensor = preds.data.squeeze().float().cpu().clamp_(0, 1)
             output_numpy = np.transpose(output_tensor.numpy(), (1, 2, 0))
             output_image = Image.fromarray((output_numpy * 255.0).round().astype(np.uint8))
-            
+
             return output_image
 
-        except Exception as e:
+        except Exception:
             self._log(f"FATAL ERROR processing image at {image_path}.")
             self._log(traceback.format_exc())
             return None
@@ -77,6 +89,6 @@ class ImageUpscaler:
                 self._log("Cleanup complete.")
             else:
                 self._log("Model was not loaded, no cleanup needed.")
-        except Exception as e:
+        except Exception:
             self._log("Error during model cleanup.")
             self._log(traceback.format_exc())

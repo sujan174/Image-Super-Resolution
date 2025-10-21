@@ -1,21 +1,32 @@
-import torch
-import numpy as np
-import os
 import gc
+import os
+import traceback
+from datetime import datetime
+
+import numpy as np
+import torch
 from PIL import Image
 from torch import nn
 from torch.nn import functional as F
-from datetime import datetime
-import traceback
+
 
 class ResidualDenseBlock(nn.Module):
+    
     def __init__(self, num_feat=64, num_grow_ch=32):
         super(ResidualDenseBlock, self).__init__()
         self.conv1 = nn.Conv2d(num_feat, num_grow_ch, 3, 1, 1)
-        self.conv2 = nn.Conv2d(num_feat + num_grow_ch, num_grow_ch, 3, 1, 1)
-        self.conv3 = nn.Conv2d(num_feat + 2 * num_grow_ch, num_grow_ch, 3, 1, 1)
-        self.conv4 = nn.Conv2d(num_feat + 3 * num_grow_ch, num_grow_ch, 3, 1, 1)
-        self.conv5 = nn.Conv2d(num_feat + 4 * num_grow_ch, num_feat, 3, 1, 1)
+        self.conv2 = nn.Conv2d(
+            num_feat + num_grow_ch, num_grow_ch, 3, 1, 1
+        )
+        self.conv3 = nn.Conv2d(
+            num_feat + 2 * num_grow_ch, num_grow_ch, 3, 1, 1
+        )
+        self.conv4 = nn.Conv2d(
+            num_feat + 3 * num_grow_ch, num_grow_ch, 3, 1, 1
+        )
+        self.conv5 = nn.Conv2d(
+            num_feat + 4 * num_grow_ch, num_feat, 3, 1, 1
+        )
         self.lrelu = nn.LeakyReLU(negative_slope=0.2, inplace=True)
 
     def forward(self, x):
@@ -26,7 +37,9 @@ class ResidualDenseBlock(nn.Module):
         x5 = self.conv5(torch.cat((x, x1, x2, x3, x4), 1))
         return x5 * 0.2 + x
 
+
 class RRDB(nn.Module):
+    
     def __init__(self, num_feat, num_grow_ch=32):
         super(RRDB, self).__init__()
         self.rdb1 = ResidualDenseBlock(num_feat, num_grow_ch)
@@ -39,11 +52,16 @@ class RRDB(nn.Module):
         out = self.rdb3(out)
         return out * 0.2 + x
 
+
 class RRDBNet(nn.Module):
-    def __init__(self, num_in_ch, num_out_ch, num_feat, num_block, num_grow_ch):
+    
+    def __init__(self, num_in_ch, num_out_ch, num_feat, num_block,
+                 num_grow_ch):
         super(RRDBNet, self).__init__()
         self.conv_first = nn.Conv2d(num_in_ch, num_feat, 3, 1, 1)
-        self.body = nn.Sequential(*[RRDB(num_feat, num_grow_ch) for _ in range(num_block)])
+        self.body = nn.Sequential(
+            *[RRDB(num_feat, num_grow_ch) for _ in range(num_block)]
+        )
         self.conv_body = nn.Conv2d(num_feat, num_feat, 3, 1, 1)
         self.conv_up1 = nn.Conv2d(num_feat, num_feat, 3, 1, 1)
         self.conv_up2 = nn.Conv2d(num_feat, num_feat, 3, 1, 1)
@@ -55,25 +73,47 @@ class RRDBNet(nn.Module):
         feat = self.conv_first(x)
         body_feat = self.conv_body(self.body(feat))
         feat = feat + body_feat
-        feat = self.lrelu(self.conv_up1(F.interpolate(feat, scale_factor=2, mode='nearest')))
-        feat = self.lrelu(self.conv_up2(F.interpolate(feat, scale_factor=2, mode='nearest')))
+        
+        feat = self.lrelu(
+            self.conv_up1(
+                F.interpolate(feat, scale_factor=2, mode='nearest')
+            )
+        )
+        feat = self.lrelu(
+            self.conv_up2(
+                F.interpolate(feat, scale_factor=2, mode='nearest')
+            )
+        )
+        
         out = self.conv_last(self.lrelu(self.conv_hr(feat)))
         return out
 
+
 class ImageUpscaler:
-    def __init__(self, model_type: str, scale: int, model_path: str, log_file_path: str = None):
+    
+    def __init__(self, model_type: str, scale: int, model_path: str,
+                 log_file_path: str = None):
         self.model = None
         self.scale = scale
         self.log_file_path = log_file_path
-        self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+        self.device = torch.device(
+            'cuda' if torch.cuda.is_available() else 'cpu'
+        )
         self._log(f"Using device: {self.device}")
 
         if model_type.upper() != 'REALESRGAN':
-            raise ValueError("This wrapper is specifically for RealESRGAN models.")
+            raise ValueError(
+                "This wrapper is specifically for RealESRGAN models."
+            )
         if scale != 4:
-            raise ValueError("This Real-ESRGAN model architecture only supports 4x scaling.")
+            raise ValueError(
+                "This Real-ESRGAN model architecture only supports "
+                "4x scaling."
+            )
         if not model_path:
-            raise ValueError("A 'model_path' to a local .pth file is required.")
+            raise ValueError(
+                "A 'model_path' to a local .pth file is required."
+            )
 
         self._load_model(model_path)
 
@@ -84,9 +124,18 @@ class ImageUpscaler:
                 f.write(f"{timestamp} - [Python:RealESRGAN] {message}\n")
 
     def _load_model(self, model_path: str):
-        self._log(f"Loading Real-ESRGAN model from: '{os.path.basename(model_path)}'...")
+        self._log(
+            f"Loading Real-ESRGAN model from: "
+            f"'{os.path.basename(model_path)}'..."
+        )
         try:
-            self.model = RRDBNet(num_in_ch=3, num_out_ch=3, num_feat=64, num_block=23, num_grow_ch=32)
+            self.model = RRDBNet(
+                num_in_ch=3,
+                num_out_ch=3,
+                num_feat=64,
+                num_block=23,
+                num_grow_ch=32
+            )
             
             loadnet = torch.load(model_path, map_location=torch.device('cpu'))
             keyname = 'params_ema' if 'params_ema' in loadnet else 'params'
@@ -101,7 +150,9 @@ class ImageUpscaler:
             raise
 
     def _preprocess(self, img_array: np.ndarray):
-        img_tensor = torch.from_numpy(np.transpose(img_array, (2, 0, 1))).float() / 255.0
+        img_tensor = torch.from_numpy(
+            np.transpose(img_array, (2, 0, 1))
+        ).float() / 255.0
         return img_tensor.unsqueeze(0).to(self.device)
 
     def _postprocess(self, tensor: torch.Tensor):

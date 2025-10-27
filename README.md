@@ -97,7 +97,7 @@ Create a .env file in the root directory:
 ```bash
 JWT_SECRET="your_super_secret_jwt_key"
 # If OAuth is not require you can remove passport.js and OAuth routes
-CLIENT_ID="your_client_id
+CLIENT_ID="your_client_id"
 CLIENT_SECRET="your_client_secret"
 ```
 6. Run the server
@@ -178,6 +178,7 @@ This project supports **multiple state-of-the-art AI super-resolution models** �
 | **EDSR**      | Clean, high-quality images           | Medium       | ★★★☆☆               |
 | **Real-ESRGAN**| Noisy, compressed, low-quality imgs | Medium-Slow  | ★★★★☆               | 
 | **SwinIR**    | High-res, mixed degradation          | Slow         | ★★★★★+              |
+
 
 
 

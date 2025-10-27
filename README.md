@@ -1,185 +1,240 @@
-# AI Image Upscaler 
-*A sleek, modern web application that enhances low-resolution images using powerful AI models.*
+# AI Image Upscaler
+
+A sleek, modern web application that enhances low-resolution images using powerful AI models.
+
+<div align="left">
 
 ![NodeJS](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=node.js&logoColor=white)  
 ![ExpressJS](https://img.shields.io/badge/Express.js-000000?style=for-the-badge&logo=express&logoColor=white)  
 ![PyTorch](https://img.shields.io/badge/PyTorch-EE4C2C?style=for-the-badge&logo=pytorch&logoColor=white)  
+![MongoDB](https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=mongodb&logoColor=white)
 
+</div>
 
 ---
 
-## Features  
-- **Secure User Authentication** –  Full login/signup system using JWT and cookies, now with Sign in with Google support.
-- **Multiple AI Models** – Choose between **EDSR**, **Real-ESRGAN**, and **SwinIR** for upscaling.  
-- **Variable Scaling** – Upscale images by **2x**, **3x**, or **4x**.  
-- **Interactive Result Viewer** – Compare **Before & After** with a smooth slider.  
-- **User Feedback System** – Collect ratings on the quality of upscaled images.  
-- **Resolution Limiter** – Protects server resources by rejecting overly large images.  
-- **Variable Scaling: Upscale** images by 2x, 3x, or 4x.
-- **Interactive Result Viewer** A "Before & After" slider to compare the original and upscaled images.
-- **User Gallery** A personal gallery for each user to view their history of upscaled images.
-- **User Feedback System** Collect user ratings on the quality of the upscaled images.
-- **Advanced Admin Dashboard**
-- Analytics View: Charts showing total users, total upscales, model usage, and user feedback (liked vs. disliked).
-  - Analytics View: Charts showing total users, total upscales, model usage, and user feedback (liked vs. disliked).
-  - User Management: A complete list of all users with the ability to view their detailed history.
-  - Feedback Viewer: Pages to view all liked or disliked images, with the ability to download them in bulk as a zip file for further analysis or model training.
+## ✨ Features
+
+- **Secure User Authentication** — JWT and cookie-based login/signup with Google OAuth integration
+- **Multiple AI Models** — Choose between EDSR, Real-ESRGAN, and SwinIR for optimal upscaling results
+- **Flexible Scaling Options** — Upscale images by 2x, 3x, or 4x resolution
+- **Interactive Comparison Viewer** — Before & after slider for instant quality assessment
+- **Personal Gallery** — View and manage your complete upscaling history
+- **User Feedback System** — Rate and collect insights on upscaling quality
+- **Resource Protection** — Built-in resolution limiter to safeguard server infrastructure
+- **Advanced Admin Dashboard** — Comprehensive analytics and user management tools
+  - Analytics with charts for users, upscales, model usage, and feedback trends
+  - Complete user management and detailed history viewing
+  - Bulk download of liked/disliked images for model improvement
+
 ---
 
-## Tech Stack  
+## 🛠️ Tech Stack
 
-**Frontend:**  
-- EJS (Embedded JavaScript Templates)  
-- Tailwind CSS  
+**Frontend**
+- EJS (Embedded JavaScript Templates)
+- Tailwind CSS
 - Chart.js
 
-**Backend:**  
-- Node.js  
-- Express.js  
-- MongoDB + Mongoose  
-- JWT (JSON Web Tokens) for authentication  
-- bcrypt for password hashing  
-- Multer for file uploads  
-- Sharp for image processing 
-- Archiver for creating zip files 
+**Backend**
+- Node.js & Express.js
+- MongoDB + Mongoose
+- JWT authentication
+- bcrypt password hashing
+- Multer file uploads
+- Sharp image processing
+- Archiver for ZIP file creation
 
-**AI / Python:**  
-- Python 3  
-- PyTorch  
-- Transformers (Hugging Face)  
-- Pillow (PIL)  
+**AI & Python**
+- Python 3
+- PyTorch
+- Hugging Face Transformers
+- Pillow (PIL)
 
 ---
 
-## Project Structure  
-```bash
-/
-├── controllers/ # Core logic for handling requests
-├── middleware/ # Express middleware (auth, logging)
-├── models/ # Mongoose schemas for the database
-├── public/ # Static assets (images, stylesheets)
-├── python_scripts/ # AI upscaling scripts and models
-├── routes/ # Express route definitions
-├── views/ # EJS template files
-├── .env # Environment variables (not committed)
-├── index.js # Main server entry point
+## 📁 Project Structure
+
+```
+ai-image-upscaler/
+├── controllers/          # Request handling logic
+├── middleware/           # Authentication & logging middleware
+├── models/              # Mongoose database schemas
+├── public/              # Static assets (CSS, images, JS)
+├── python_scripts/      # AI upscaling models and scripts
+├── routes/              # Express route definitions
+├── views/               # EJS template files
+├── .env                 # Environment variables (not committed)
+├── index.js             # Server entry point
 ├── package.json
 └── requirements.txt
 ```
 
 ---
 
-## Getting Started  
+## 🚀 Getting Started
 
-### **Prerequisites**  
-- Node.js & npm  
-- Python 3 & pip  
-- MongoDB installed and running  
+### Prerequisites
 
----
+- Node.js & npm
+- Python 3 & pip
+- MongoDB (local or cloud)
 
-### **1. Clone the repository**  
+### Installation
+
+**1. Clone the repository**
+
 ```bash
-git clone https://github.com/your-username/Super-Resolution-EDSR-REALESRGAN-SwinIR-.git
+git clone https://github.com/your-username/ai-image-upscaler.git
 cd ai-image-upscaler
 ```
 
-2. Install backend dependencies
+**2. Install backend dependencies**
+
 ```bash
 npm install
 ```
-3. Install Python dependencies
+
+**3. Install Python dependencies**
+
 ```bash
 pip install -r requirements.txt
 ```
-4. Set up environment variables
-Create a .env file in the root directory:
+
+**4. Set up MongoDB**
+
+Choose one of the following options:
+
+<details>
+<summary><b>Option A: Local MongoDB Installation</b></summary>
+
+**macOS (Homebrew):**
 ```bash
-JWT_SECRET="your_super_secret_jwt_key"
-# If OAuth is not require you can remove passport.js and OAuth routes
-CLIENT_ID="your_client_id"
-CLIENT_SECRET="your_client_secret"
+brew tap mongodb/brew
+brew install mongodb-community@7.0
+brew services start mongodb-community@7.0
 ```
-6. Run the server
+
+**Ubuntu / Debian:**
+```bash
+sudo apt update
+sudo apt install -y mongodb
+sudo systemctl enable mongodb
+sudo systemctl start mongodb
+```
+
+**Windows:**
+- Download from [MongoDB Community Server](https://www.mongodb.com/try/download/community)
+- Install with default settings and enable as Windows service
+- Verify: `mongo --version`
+- Start: `net start MongoDB`
+
+**Connection string:** `mongodb://localhost:27017`
+
+</details>
+
+<details>
+<summary><b>Option B: MongoDB Atlas (Cloud)</b></summary>
+
+1. Go to [MongoDB Atlas](https://www.mongodb.com/cloud/atlas)
+2. Create a free cluster and user account
+3. Obtain your connection string (format: `mongodb+srv://<username>:<password>@cluster0.mongodb.net/<database>`)
+4. Add to `.env` file as `MONGO_URI`
+
+</details>
+
+**Verify MongoDB connection:**
+
+```bash
+node -e "require('./index')"
+```
+
+**5. Configure environment variables**
+
+Create a `.env` file in the root directory:
+
+```env
+JWT_SECRET=your_super_secret_jwt_key
+MONGO_URI=mongodb://localhost:27017/ai_image_upscaler
+CLIENT_ID=your_google_client_id
+CLIENT_SECRET=your_google_client_secret
+```
+
+**6. Start the application**
+
 ```bash
 node index.js
 ```
-The app will be available at: http://localhost:8000
 
-## Image Upscaling Models
-
-This project supports **multiple state-of-the-art AI super-resolution models** — **EDSR**, **Real-ESRGAN**, and **SwinIR** — each offering different trade-offs between speed, quality, and computational requirements.  
+The application will be available at: **http://localhost:8000**
 
 ---
 
-### 1. EDSR (Enhanced Deep Super-Resolution Network)
-**Paper:** [Enhanced Deep Residual Networks for Single Image Super-Resolution](https://arxiv.org/abs/1707.02921)  
-**Best for:** High-quality results on clean, non-noisy images.  
+## 🤖 AI Image Upscaling Models
 
-**Key Features:**
-- Deep residual blocks without batch normalization for better accuracy.
-- Highly effective for **photographic images** where sharpness is critical.
-- Produces **less noise** than many GAN-based methods.
+This project features three state-of-the-art super-resolution models, each optimized for different use cases.
 
-**Advantages:**
-- High PSNR and SSIM (great for fidelity to the original image).
-- Minimal artifacts.
+### EDSR (Enhanced Deep Super-Resolution Network)
 
-**Limitations:**
-- Slower than lighter models. (EDSR-base is beign used in this project)
-- Does not handle heavy noise well.
+**Paper:** [Enhanced Deep Residual Networks for Single Image Super-Resolution](https://arxiv.org/abs/1707.02921)
 
----
+**Ideal For:** Clean, high-quality images requiring maximum fidelity
 
-### 2. Real-ESRGAN
-**Paper:** [Real-ESRGAN: Training Real-World Blind Super-Resolution with Pure Synthetic Data](https://arxiv.org/abs/2107.10833)  
-**Best for:** Upscaling real-world images with noise, JPEG artifacts, or compression damage.  
+**Strengths**
+- High PSNR and SSIM metrics for image accuracy
+- Minimal artifacts and clean output
+- Excellent for photographic images
 
-**Key Features:**
-- Improves on ESRGAN by adding **realistic degradations** to training data.
-- Handles **noise, blur, and compression artifacts**.
-- Suitable for **old photos**, **low-quality camera shots**, and **screenshots**.
-- Supports **general-purpose image restoration**.
-
-**Advantages:**
-- Great for **restoration + upscaling** in one step.
-- Better results for low-quality or damaged images.
-
-**Limitations:**
-- Slightly softer results on very clean images.
-- Can be slower on very large inputs.
+**Limitations**
+- Slower inference compared to lighter models
+- Struggles with noisy or heavily degraded images
 
 ---
 
-### 3. SwinIR (Swin Transformer for Image Restoration)
-**Paper:** [SwinIR: Image Restoration Using Swin Transformer](https://arxiv.org/abs/2108.10257)  
-**Best for:** Top-tier quality across a wide range of restoration tasks, especially high-resolution images.  
+### Real-ESRGAN
 
-**Key Features:**
-- Based on **Swin Transformer** architecture for powerful context modeling.
-- Works well for **super-resolution, denoising, and JPEG artifact removal**.
-- Captures **long-range dependencies** for better detail synthesis.
+**Paper:** [Real-ESRGAN: Training Real-World Blind Super-Resolution with Pure Synthetic Data](https://arxiv.org/abs/2107.10833)
 
-**Advantages:**
-- State-of-the-art benchmark results.
-- Handles clean and degraded images effectively.
-- Preserves textures and details better than most CNN-based methods.
+**Ideal For:** Real-world images with noise, JPEG artifacts, or compression damage
 
-**Limitations:**
-- Requires more VRAM and compute.
-- Slower inference compared to lighter models.
+**Strengths**
+- Handles noise, blur, and compression artifacts effectively
+- Excellent for old photos and low-quality camera shots
+- One-step restoration and upscaling
+
+**Limitations**
+- Slightly softer results on pristine images
+- Slower on very large inputs
 
 ---
 
-### Model Selection Guide
+### SwinIR (Swin Transformer for Image Restoration)
 
-| Model         | Best For                             | Speed        | Detail Preservation |
-|---------------|--------------------------------------|--------------|---------------------|
-| **EDSR**      | Clean, high-quality images           | Medium       | ★★★☆☆               |
-| **Real-ESRGAN**| Noisy, compressed, low-quality imgs | Medium-Slow  | ★★★★☆               | 
-| **SwinIR**    | High-res, mixed degradation          | Slow         | ★★★★★+              |
+**Paper:** [SwinIR: Image Restoration Using Swin Transformer](https://arxiv.org/abs/2108.10257)
 
+**Ideal For:** High-resolution images with mixed degradation requiring best-in-class quality
 
+**Strengths**
+- State-of-the-art benchmark performance
+- Superior texture and detail preservation
+- Effective for both clean and degraded images
+- Advanced Swin Transformer architecture
+
+**Limitations**
+- Highest computational requirements
+- Requires more VRAM and processing time
+
+---
+
+## 📊 Model Comparison
+
+| Model | Best Use Case | Speed | Detail Preservation | Noise Handling |
+|-------|---------------|-------|---------------------|----------------|
+| **EDSR** | Clean, high-quality images | ⚡⚡ Medium | ⭐⭐⭐ Good | ⭐⭐ Fair |
+| **Real-ESRGAN** | Degraded, noisy images | ⚡ Slow | ⭐⭐⭐⭐ Excellent | ⭐⭐⭐⭐ Excellent |
+| **SwinIR** | High-resolution mixed quality | 🐢 Very Slow | ⭐⭐⭐⭐⭐ Outstanding | ⭐⭐⭐⭐⭐ Outstanding |
+
+---
 
 
 

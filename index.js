@@ -8,9 +8,13 @@ const uploadRouter = require('./routes/upload');
 const userRouter = require('./routes/user');
 
 const app = express();
-const PORT = 8000;
+const PORT = process.env.PORT || 3000;
 
-connectToMongoDB('mongodb://127.0.0.1:27017/upscaler');
+require('dotenv').config();
+
+const mongoUri = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/upscaler';
+
+connectToMongoDB(mongoUri);
 
 app.set('view engine', 'ejs');
 app.set('views', 'views');
@@ -23,5 +27,5 @@ app.use('/upload', uploadRouter);
 app.use('/user', userRouter);
 
 app.listen(PORT, () => {
-  console.log(`App started on port ${PORT}`);
+  console.log(`App started on port http://localhost:${PORT}`);
 });

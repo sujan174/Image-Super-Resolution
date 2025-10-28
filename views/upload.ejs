@@ -5,54 +5,69 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Image Upscaler</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Inter', sans-serif; }
-        .animate-blob { animation: blob 8s infinite; }
-        @keyframes blob {
-            0%, 100% { transform: translate(0px, 0px) scale(1); }
-            33% { transform: translate(40px, -60px) scale(1.1); }
-            66% { transform: translate(-30px, 30px) scale(0.9); }
+        .glass-card {
+            background: rgba(17, 24, 39, 0.7);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .glow-text {
+            text-shadow: 0 0 40px rgba(168, 85, 247, 0.4);
         }
     </style>
 </head>
 <body class="bg-gray-900 text-white">
-    <div class="absolute top-4 right-4 flex items-center space-x-4 z-20">
-        <a href="/user/gallery" class="text-sm font-medium bg-gray-800/50 border border-gray-700 text-gray-300 hover:bg-gray-700 px-4 py-2 rounded-full">My Gallery</a>
-        <% if (typeof user !== 'undefined' && user.admin) { %>
-            <a href="/user/admin" class="text-sm font-medium bg-yellow-600/50 border border-yellow-500 text-yellow-300 hover:bg-yellow-700 px-4 py-2 rounded-full">Admin</a>
-        <% } %>
-        <a href="/user/logout" class="text-sm font-medium bg-gray-800/50 border border-gray-700 text-gray-300 hover:bg-gray-700 px-4 py-2 rounded-full">Logout</a>
-    </div>
-
-    <div class="relative min-h-screen flex items-center justify-center p-4 overflow-hidden">
-        <div class="absolute top-0 -left-4 w-72 h-72 bg-purple-600 rounded-full mix-blend-screen filter blur-xl opacity-20 animate-blob"></div>
-        <div class="absolute top-0 -right-4 w-72 h-72 bg-blue-500 rounded-full mix-blend-screen filter blur-xl opacity-20 animate-blob" style="animation-delay: -2s;"></div>
-        <div class="absolute -bottom-8 left-20 w-72 h-72 bg-pink-500 rounded-full mix-blend-screen filter blur-xl opacity-20 animate-blob" style="animation-delay: -4s;"></div>
-
-        <div class="relative w-full max-w-lg bg-gray-800/50 backdrop-blur-lg rounded-2xl shadow-2xl shadow-black/30 border border-gray-700">
-            
-            <div class="p-8 md:p-10">
-                <div class="text-center mb-6">
-                    <h1 class="text-3xl font-bold tracking-tight">AI Image Upscaler</h1>
-                    <p class="text-gray-400 mt-2">Enhance your images to a higher resolution.</p>
-                </div>
-
-                <div id="message-container">
-                    <% if (typeof error !== 'undefined' && error) { %>
-                        <div class="bg-red-500/10 border border-red-500/30 text-red-300 text-sm rounded-lg p-3 mb-6 text-center" role="alert">
-                            <%= error %>
-                        </div>
+    
+    <!-- Navigation -->
+    <nav class="fixed top-0 left-0 right-0 z-50 glass-card">
+        <div class="max-w-7xl mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <h1 class="text-2xl font-bold text-white glow-text">AI Image Upscaler</h1>
+                <div class="flex items-center space-x-3">
+                    <a href="/user/gallery" class="text-sm font-medium glass-card hover:border-purple-500/50 text-gray-300 hover:text-white px-4 py-2 rounded-lg transition-all">
+                        My Gallery
+                    </a>
+                    <% if (typeof user !== 'undefined' && user.admin) { %>
+                        <a href="/user/admin" class="text-sm font-medium bg-yellow-600/20 border border-yellow-500/50 text-yellow-300 hover:bg-yellow-600/30 px-4 py-2 rounded-lg transition-all">
+                            Admin
+                        </a>
                     <% } %>
+                    <a href="/user/logout" class="text-sm font-medium glass-card hover:border-purple-500/50 text-gray-300 hover:text-white px-4 py-2 rounded-lg transition-all">
+                        Logout
+                    </a>
                 </div>
+            </div>
+        </div>
+    </nav>
 
-                <form id="uploadForm">
-                    <div class="space-y-6">
+    <div class="relative min-h-screen flex items-center justify-center p-6 pt-24">
+        <div class="w-full max-w-2xl">
+            <div class="glass-card rounded-2xl shadow-2xl">
+                <div class="p-8 md:p-10">
+                    <div class="text-center mb-8">
+                        <h2 class="text-3xl font-bold text-white mb-2">Enhance Your Images</h2>
+                        <p class="text-gray-400">Transform your images to higher resolution with AI</p>
+                    </div>
+
+                    <div id="message-container">
+                        <% if (typeof error !== 'undefined' && error) { %>
+                            <div class="bg-red-500/10 border border-red-500/30 text-red-300 text-sm rounded-lg p-3 mb-6">
+                                <%= error %>
+                            </div>
+                        <% } %>
+                    </div>
+
+                    <form id="uploadForm" class="space-y-6">
+                        <!-- Model Selection -->
                         <div>
-                            <div class="flex items-center gap-2 mb-2">
+                            <div class="flex items-center gap-2 mb-3">
                                 <label class="text-sm font-medium text-gray-300">Upscaling Model</label>
-                                <button type="button" id="info-btn" class="text-gray-400 hover:text-white">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" /></svg>
+                                <button type="button" id="info-btn" class="text-gray-400 hover:text-purple-400 transition-colors">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                                    </svg>
                                 </button>
                             </div>
                             <div class="relative" id="custom-select-wrapper">
@@ -61,69 +76,82 @@
                                     <option value="RealESRGAN">RealESRGAN</option>
                                     <option value="SwinIR">SwinIR</option>
                                 </select>
-                                <div id="custom-select-trigger" class="flex items-center justify-between w-full px-4 py-3 bg-gray-900/60 border border-gray-700 rounded-lg cursor-pointer">
-                                    <span id="custom-select-value">EDSR</span>
-                                    <svg class="w-5 h-5 text-gray-400" id="custom-select-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                <div id="custom-select-trigger" class="flex items-center justify-between w-full px-4 py-3 bg-gray-900/60 border border-gray-700 rounded-lg cursor-pointer hover:border-purple-500/50 transition-all">
+                                    <span id="custom-select-value" class="text-white">EDSR</span>
+                                    <svg class="w-5 h-5 text-gray-400 transition-transform" id="custom-select-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                    </svg>
                                 </div>
-                                <div id="custom-select-options" class="absolute z-10 w-full mt-2 bg-gray-900 border border-gray-700 rounded-lg shadow-lg hidden">
-                                    <div class="p-1">
-                                        <div class="custom-option p-2 rounded-md hover:bg-purple-600 cursor-pointer" data-value="EDSR">EDSR</div>
-                                        <div class="custom-option p-2 rounded-md hover:bg-purple-600 cursor-pointer" data-value="RealESRGAN">Real-ESRGAN</div>
-                                        <div class="custom-option p-2 rounded-md hover:bg-purple-600 cursor-pointer" data-value="SwinIR">SwinIR</div>
+                                <div id="custom-select-options" class="absolute z-10 w-full mt-2 glass-card rounded-lg shadow-2xl hidden">
+                                    <div class="p-2">
+                                        <div class="custom-option px-4 py-3 rounded-lg hover:bg-purple-600/50 cursor-pointer transition-colors text-white" data-value="EDSR">EDSR</div>
+                                        <div class="custom-option px-4 py-3 rounded-lg hover:bg-purple-600/50 cursor-pointer transition-colors text-white" data-value="RealESRGAN">Real-ESRGAN</div>
+                                        <div class="custom-option px-4 py-3 rounded-lg hover:bg-purple-600/50 cursor-pointer transition-colors text-white" data-value="SwinIR">SwinIR</div>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
+                        <!-- Scale Factor -->
                         <div>
-                            <label class="block mb-2 text-sm font-medium text-gray-300">Scale Factor</label>
-                            <div id="scaleButtons" class="grid grid-cols-3 gap-2">
-                                <button type="button" data-scale="2" class="scale-btn w-full py-2 rounded-lg bg-gray-700">2x</button>
-                                <button type="button" data-scale="3" class="scale-btn w-full py-2 rounded-lg bg-gray-700">3x</button>
-                                <button type="button" data-scale="4" class="scale-btn w-full py-2 rounded-lg bg-purple-600">4x</button>
+                            <label class="block mb-3 text-sm font-medium text-gray-300">Scale Factor</label>
+                            <div id="scaleButtons" class="grid grid-cols-3 gap-3">
+                                <button type="button" data-scale="2" class="scale-btn py-3 rounded-lg bg-gray-700/50 border border-gray-600 hover:border-purple-500/50 transition-all font-medium text-white">2x</button>
+                                <button type="button" data-scale="3" class="scale-btn py-3 rounded-lg bg-gray-700/50 border border-gray-600 hover:border-purple-500/50 transition-all font-medium text-white">3x</button>
+                                <button type="button" data-scale="4" class="scale-btn py-3 rounded-lg bg-gradient-to-r from-purple-600 to-pink-600 border border-purple-500 font-medium text-white">4x</button>
                             </div>
                             <input type="hidden" id="scale" name="scale" value="4">
                         </div>
 
-                        <div class="border-2 border-dashed border-gray-600 rounded-lg p-8 text-center cursor-pointer" onclick="document.getElementById('imageFile').click();">
-                            <label for="imageFile" class="font-medium text-gray-400 cursor-pointer">Click to choose an image</label>
-                            <input type="file" id="imageFile" name="imageFile" accept="image/*" class="hidden" required>
-                            <div id="fileName" class="mt-2 text-sm text-purple-400"></div>
+                        <!-- File Upload -->
+                        <div>
+                            <label class="block mb-3 text-sm font-medium text-gray-300">Upload Image</label>
+                            <div class="border-2 border-dashed border-gray-600 rounded-lg p-10 text-center cursor-pointer hover:border-purple-500/50 transition-all bg-gray-900/30" onclick="document.getElementById('imageFile').click();">
+                                <svg class="w-12 h-12 mx-auto mb-3 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                                </svg>
+                                <p class="text-gray-400 font-medium mb-1">Click to upload an image</p>
+                                <p class="text-gray-500 text-sm">or drag and drop</p>
+                                <input type="file" id="imageFile" name="imageFile" accept="image/*" class="hidden" required>
+                                <div id="fileName" class="mt-3 text-sm text-purple-400 font-medium"></div>
+                            </div>
                         </div>
 
-                        <div>
-                            <button type="submit" id="submit-btn" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-4 rounded-lg">
-                                Upscale Image
-                            </button>
-                        </div>
-                    </div>
-                </form>
+                        <!-- Submit Button -->
+                        <button type="submit" id="submit-btn" class="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold py-3 px-4 rounded-lg transition-all duration-300 shadow-lg hover:shadow-purple-500/50">
+                            Upscale Image
+                        </button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
     
-    <div id="info-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center hidden z-50">
-        <div class="bg-gray-800 rounded-2xl shadow-xl border border-gray-700 p-8 w-full max-w-md">
-            <h2 class="text-2xl font-bold mb-4">Model Explanations</h2>
-            <div class="space-y-4 text-gray-300">
-                <div>
-                    <h3 class="font-bold text-purple-400">EDSR - The Faithful Upscaler</h3>
-                    <p class="text-sm">Excellent for clean upscaling. It focuses on enhancing existing details to make them sharper and clearer while staying true to the original. Ideal for high-quality photos and digital art.</p>
+    <!-- Info Modal -->
+    <div id="info-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center hidden z-50 p-6">
+        <div class="glass-card rounded-2xl shadow-2xl p-8 w-full max-w-lg">
+            <h2 class="text-2xl font-bold mb-6 text-white">AI Model Guide</h2>
+            <div class="space-y-5 text-gray-300">
+                <div class="glass-card rounded-lg p-4">
+                    <h3 class="font-bold text-purple-400 mb-2 text-lg">EDSR - The Faithful Upscaler</h3>
+                    <p class="text-sm leading-relaxed">Excellent for clean upscaling. It focuses on enhancing existing details to make them sharper and clearer while staying true to the original. Ideal for high-quality photos and digital art.</p>
                 </div>
-                <div>
-                    <h3 class="font-bold text-purple-400">Real-ESRGAN - The Restorer</h3>
-                    <p class="text-sm">A powerful generative model that excels at restoring old or compressed photos. It can creatively "hallucinate" and add new, plausible details where the original information was lost.</p>
+                <div class="glass-card rounded-lg p-4">
+                    <h3 class="font-bold text-purple-400 mb-2 text-lg">Real-ESRGAN - The Restorer</h3>
+                    <p class="text-sm leading-relaxed">A powerful generative model that excels at restoring old or compressed photos. It can creatively "hallucinate" and add new, plausible details where the original information was lost.</p>
                 </div>
-                <div>
-                    <h3 class="font-bold text-purple-400">SwinIR - The Detail Expert</h3>
-                    <p class="text-sm">A state-of-the-art Transformer-based model. It's exceptionally good at reconstructing realistic, fine-grained textures like skin, fabric, or hair, producing very natural results.</p>
+                <div class="glass-card rounded-lg p-4">
+                    <h3 class="font-bold text-purple-400 mb-2 text-lg">SwinIR - The Detail Expert</h3>
+                    <p class="text-sm leading-relaxed">A state-of-the-art Transformer-based model. It's exceptionally good at reconstructing realistic, fine-grained textures like skin, fabric, or hair, producing very natural results.</p>
                 </div>
             </div>
-            <p class="text-xs text-gray-500 mt-6 pt-4 border-t border-gray-700 italic">
-                Disclaimer: This app uses smaller versions of these models and might not perform as well as the full-sized originals.
-            </p>
-            <button id="close-modal-btn" class="mt-4 w-full bg-gray-600 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded-lg">
-                Close
+            <div class="glass-card rounded-lg p-4 mt-5">
+                <p class="text-xs text-gray-400 italic">
+                    <strong>Disclaimer:</strong> This app uses smaller versions of these models and might not perform as well as the full-sized originals.
+                </p>
+            </div>
+            <button id="close-modal-btn" class="mt-6 w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold py-3 px-4 rounded-lg transition-all duration-300">
+                Got it!
             </button>
         </div>
     </div>
@@ -137,8 +165,8 @@
             event.preventDefault();
             
             submitBtn.disabled = true;
-            submitBtn.textContent = 'Processing...';
-            submitBtn.classList.remove('bg-purple-600', 'hover:bg-purple-700');
+            submitBtn.innerHTML = '<svg class="animate-spin h-5 w-5 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>';
+            submitBtn.classList.remove('from-purple-600', 'to-pink-600', 'hover:from-purple-700', 'hover:to-pink-700');
             submitBtn.classList.add('bg-gray-600', 'cursor-not-allowed');
             messageContainer.innerHTML = '';
 
@@ -154,12 +182,12 @@
                     window.location.href = response.url;
                 } else if (!response.ok) {
                     const errorText = await response.text();
-                    messageContainer.innerHTML = `<div class="bg-red-500/10 border border-red-500/30 text-red-300 text-sm rounded-lg p-3 mb-6 text-center">${errorText}</div>`;
+                    messageContainer.innerHTML = `<div class="bg-red-500/10 border border-red-500/30 text-red-300 text-sm rounded-lg p-3 mb-6">${errorText}</div>`;
                     resetButton();
                 }
             } catch (error) {
                 console.error('Submission error:', error);
-                messageContainer.innerHTML = `<div class="bg-red-500/10 border border-red-500/30 text-red-300 text-sm rounded-lg p-3 mb-6 text-center">An unexpected error occurred.</div>`;
+                messageContainer.innerHTML = `<div class="bg-red-500/10 border border-red-500/30 text-red-300 text-sm rounded-lg p-3 mb-6">An unexpected error occurred.</div>`;
                 resetButton();
             }
         });
@@ -167,7 +195,7 @@
         function resetButton() {
             submitBtn.disabled = false;
             submitBtn.textContent = 'Upscale Image';
-            submitBtn.classList.add('bg-purple-600', 'hover:bg-purple-700');
+            submitBtn.classList.add('from-purple-600', 'to-pink-600', 'hover:from-purple-700', 'hover:to-pink-700');
             submitBtn.classList.remove('bg-gray-600', 'cursor-not-allowed');
         }
 
@@ -187,27 +215,40 @@
 
         infoBtn.addEventListener('click', () => infoModal.classList.remove('hidden'));
         closeModalBtn.addEventListener('click', () => infoModal.classList.add('hidden'));
+        
+        infoModal.addEventListener('click', (e) => {
+            if (e.target === infoModal) infoModal.classList.add('hidden');
+        });
 
         selectTrigger.addEventListener('click', () => {
             selectOptions.classList.toggle('hidden');
+            selectArrow.style.transform = selectOptions.classList.contains('hidden') ? 'rotate(0deg)' : 'rotate(180deg)';
         });
 
         selectOptions.addEventListener('click', (e) => {
             if (e.target.classList.contains('custom-option')) {
-                selectValue.textContent = e.target.dataset.value;
-                nativeSelect.value = e.target.dataset.value;
+                const displayValue = e.target.textContent;
+                const actualValue = e.target.dataset.value;
+                selectValue.textContent = displayValue;
+                nativeSelect.value = actualValue;
                 selectOptions.classList.add('hidden');
+                selectArrow.style.transform = 'rotate(0deg)';
             }
         });
         
         document.addEventListener('click', (e) => {
             if (!selectWrapper.contains(e.target)) {
                 selectOptions.classList.add('hidden');
+                selectArrow.style.transform = 'rotate(0deg)';
             }
         });
 
         imageFileInput.addEventListener('change', () => {
-            fileNameDiv.textContent = imageFileInput.files.length > 0 ? imageFileInput.files[0].name : '';
+            if (imageFileInput.files.length > 0) {
+                fileNameDiv.textContent = '✓ ' + imageFileInput.files[0].name;
+            } else {
+                fileNameDiv.textContent = '';
+            }
         });
 
         scaleButtonsContainer.addEventListener('click', (event) => {
@@ -215,11 +256,11 @@
             if (!clickedButton) return;
             scaleInput.value = clickedButton.dataset.scale;
             scaleButtonsContainer.querySelectorAll('.scale-btn').forEach(btn => {
-                btn.classList.remove('bg-purple-600');
-                btn.classList.add('bg-gray-700');
+                btn.classList.remove('from-purple-600', 'to-pink-600', 'border-purple-500');
+                btn.classList.add('bg-gray-700/50', 'border-gray-600');
             });
-            clickedButton.classList.add('bg-purple-600');
-            clickedButton.classList.remove('bg-gray-700');
+            clickedButton.classList.remove('bg-gray-700/50', 'border-gray-600');
+            clickedButton.classList.add('from-purple-600', 'to-pink-600', 'border-purple-500', 'bg-gradient-to-r');
         });
     </script>
 </body>

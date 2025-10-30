@@ -1,3 +1,5 @@
+// Developed by Sujan H
+
 const userModel = require('../models/user');
 
 // Verify user has admin privileges before allowing access to admin routes

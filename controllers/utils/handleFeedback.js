@@ -1,3 +1,5 @@
+// Developed by Sujan H
+
 const userModel = require('../../models/user');
 
 // Save user feedback (like/dislike) for an upscaled image in their history

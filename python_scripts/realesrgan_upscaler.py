@@ -1,3 +1,4 @@
+# Developed by Sujan H
 # Real-ESRGAN upscaling with custom RRDB architecture implementation
 import gc
 import os

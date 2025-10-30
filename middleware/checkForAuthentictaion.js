@@ -1,3 +1,5 @@
+// Developed by Sujan H
+
 const jwt = require('jsonwebtoken');
 
 // Verify JWT token and attach user payload to request, redirect to login if invalid

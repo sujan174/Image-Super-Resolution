@@ -1,3 +1,4 @@
+# Developed by Sujan H
 # EDSR (Enhanced Deep Residual Networks) image upscaling implementation
 import torch
 import gc

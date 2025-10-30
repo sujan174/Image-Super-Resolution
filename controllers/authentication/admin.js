@@ -1,3 +1,5 @@
+// Developed by Sujan H
+
 const userModel = require('../../models/user');
 
 // Display admin dashboard with aggregated statistics across all users

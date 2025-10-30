@@ -1,5 +1,6 @@
 const userModel = require('../../models/user');
 
+// Display user's gallery of previously upscaled images in reverse chronological order
 async function handleGallery(req, res) {
   try {
     const user = await userModel.findById(req.user.id).lean();

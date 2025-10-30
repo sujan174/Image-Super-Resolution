@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 
+// Define user schema with authentication fields and image upscaling history
 const userSchema = mongoose.Schema({
   name: {
     type: String,
@@ -18,6 +19,7 @@ const userSchema = mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  // Track all images processed by this user with feedback and metadata
   imageHistory: [{
     originalPath: { type: String, required: true },
     upscaledPath: { type: String, required: true },

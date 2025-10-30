@@ -2,6 +2,7 @@ const userModel = require('../../models/user');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 
+// Handle user login authentication with email and password verification
 async function handleLogin(req, res) {
   try {
     const password = req.body.password;
@@ -14,6 +15,7 @@ async function handleLogin(req, res) {
       });
     }
 
+    // Verify password hash matches
     const isPasswordCorrect = await bcrypt.compare(password, user.password);
 
     if (!isPasswordCorrect) {
@@ -22,6 +24,7 @@ async function handleLogin(req, res) {
       });
     }
 
+    // Generate JWT token and set as HTTP-only cookie
     const token = jwt.sign(
       { id: user._id, email: user.email },
       process.env.JWT_SECRET,

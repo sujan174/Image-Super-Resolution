@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 
+// Establish connection to MongoDB database and exit process on failure
 async function connectToMongoDB(url) {
   try {
     await mongoose.connect(url);

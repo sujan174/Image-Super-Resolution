@@ -1,3 +1,4 @@
+# Main entry point for image upscaling with multiple AI model support
 import sys
 import os
 import traceback
@@ -32,6 +33,7 @@ def main():
     global LOG_FILE_PATH
     TIMEOUT_SECONDS = 180
 
+    # Set up timeout handler to prevent long-running processes
     if hasattr(signal, 'SIGALRM'):
         signal.signal(signal.SIGALRM, timeout_handler)
     else:
@@ -65,6 +67,7 @@ def main():
             signal.alarm(TIMEOUT_SECONDS)
 
         try:
+            # Select appropriate upscaler class based on model type
             upscaler_map = {
                 'EDSR': EdsrUpscaler,
                 'RealESRGAN': RealEsrganUpscaler,
@@ -78,6 +81,7 @@ def main():
 
             log_to_file(f"Instantiating 4x upscaler for model: {model_type}")
 
+            # Initialize model with appropriate parameters
             script_dir = os.path.dirname(__file__)
             upscaler = None
             if model_type == 'RealESRGAN':
@@ -98,6 +102,7 @@ def main():
                     model_type=model_type, scale=4, model_name=model_identifier
                 )
 
+            # Process image and handle downscaling if requested scale is less than 4x
             log_to_file("Upscaler instantiated. Starting image processing...")
             upscaled_4x_image = upscaler.upscale_image(input_path)
             log_to_file("Image processing finished.")

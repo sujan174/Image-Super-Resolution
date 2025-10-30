@@ -1,3 +1,4 @@
+# Real-ESRGAN upscaling with custom RRDB architecture implementation
 import gc
 import os
 import traceback
@@ -10,8 +11,9 @@ from torch import nn
 from torch.nn import functional as F
 
 
+# Residual Dense Block - building block for the RRDB architecture
 class ResidualDenseBlock(nn.Module):
-    
+
     def __init__(self, num_feat=64, num_grow_ch=32):
         super(ResidualDenseBlock, self).__init__()
         self.conv1 = nn.Conv2d(num_feat, num_grow_ch, 3, 1, 1)
@@ -89,13 +91,15 @@ class RRDBNet(nn.Module):
         return out
 
 
+# Main upscaler class that loads and runs the Real-ESRGAN model
 class ImageUpscaler:
-    
+
     def __init__(self, model_type: str, scale: int, model_path: str,
                  log_file_path: str = None):
         self.model = None
         self.scale = scale
         self.log_file_path = log_file_path
+        # Use GPU acceleration if available
         self.device = torch.device(
             'cuda' if torch.cuda.is_available() else 'cpu'
         )

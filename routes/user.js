@@ -18,17 +18,22 @@ const handleDownloadFeedback = require('../controllers/utils/handleDownloadFeedb
 
 const router = express.Router();
 
+// Authentication routes for signup, login, and logout
 router.get('/signup', redirectIfLoggedIn, (req, res) => res.render('signup'));
 router.get('/login', redirectIfLoggedIn, (req, res) => res.render('login'));
 router.get('/logout', handleLogout);
 router.post('/login', handleLogin);
 router.post('/signup', handleSignup);
+
+// User gallery and admin management routes
 router.get('/gallery', checkForAuthentication, handleGallery);
 router.get('/admin', checkForAuthentication, checkForAdmin, handleAdminDashboard);
 router.get('/admin/users', checkForAuthentication, checkForAdmin, handleGetAllUsers);
 router.get('/admin/users/:id', checkForAuthentication, checkForAdmin, handleGetUserDetail);
 router.get('/admin/feedback', checkForAuthentication, checkForAdmin, handleAdminFeedbackView);
 router.get('/admin/download-feedback', checkForAuthentication, checkForAdmin, handleDownloadFeedback);
+
+// Google OAuth authentication flow
 router.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 router.get('/auth/google/callback',
   passport.authenticate('google', { failureRedirect: '/user/login', session: false }),

@@ -1,3 +1,4 @@
+# SwinIR/Swin2SR transformer-based image super-resolution upscaler
 import gc
 import os
 import traceback
@@ -10,13 +11,14 @@ from transformers import Swin2SRForImageSuperResolution, Swin2SRImageProcessor
 
 
 class ImageUpscaler:
-    
+
     def __init__(self, model_type: str, scale: int, model_name: str = None,
                  log_file_path: str = None):
         self.model = None
         self.processor = None
         self.scale = scale
         self.log_file_path = log_file_path
+        # Automatically select GPU or CPU for model inference
         self.device = torch.device(
             'cuda' if torch.cuda.is_available() else 'cpu'
         )
@@ -57,13 +59,14 @@ class ImageUpscaler:
             self._log(traceback.format_exc())
             raise
 
+    # Run image through Swin2SR model and return upscaled result
     def upscale_image(self, image_path: str):
         if not self.model or not self.processor:
             self._log(
                 "ERROR: Model or processor is not loaded, cannot upscale."
             )
             return None
-            
+
         try:
             self._log(f"Opening image: {image_path}")
             image = Image.open(image_path).convert('RGB')
@@ -76,13 +79,14 @@ class ImageUpscaler:
                 outputs = self.model(**inputs)
             self._log("Inference complete.")
 
+            # Convert model output tensor to image
             output = outputs.reconstruction.data.squeeze().float().cpu()
             output = output.clamp_(0, 1).numpy()
             output = np.moveaxis(output, source=0, destination=-1)
             output_image = Image.fromarray(
                 (output * 255.0).round().astype(np.uint8)
             )
-            
+
             return output_image
 
         except Exception as e:

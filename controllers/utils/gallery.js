@@ -1,3 +1,5 @@
+// Developed by Sujan H
+
 const userModel = require('../../models/user');
 
 // Display user's gallery of previously upscaled images in reverse chronological order

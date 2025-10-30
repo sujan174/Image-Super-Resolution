@@ -1,3 +1,4 @@
+# Developed by Sujan H
 # Main entry point for image upscaling with multiple AI model support
 import sys
 import os

@@ -1,3 +1,5 @@
+// Developed by Sujan H
+
 const mongoose = require('mongoose');
 
 // Establish connection to MongoDB database and exit process on failure

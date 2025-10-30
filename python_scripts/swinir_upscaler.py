@@ -1,3 +1,4 @@
+# Developed by Sujan H
 # SwinIR/Swin2SR transformer-based image super-resolution upscaler
 import gc
 import os

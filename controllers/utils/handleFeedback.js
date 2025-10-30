@@ -1,5 +1,6 @@
 const userModel = require('../../models/user');
 
+// Save user feedback (like/dislike) for an upscaled image in their history
 async function handleFeedback(req, res) {
   try {
     const {
@@ -11,6 +12,7 @@ async function handleFeedback(req, res) {
       return res.status(401).send('Authentication error.');
     }
 
+    // Update the specific image entry in user's image history array
     const result = await userModel.updateOne(
       {
         _id: req.user.id,

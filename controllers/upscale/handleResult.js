@@ -3,6 +3,7 @@ const sharp = require('sharp');
 
 const IMAGES_DIR = path.join(__dirname, '../../public/images/');
 
+// Display upscaled image result with comparison to original
 async function handleResult(req, res) {
   try {
     const {
@@ -13,6 +14,7 @@ async function handleResult(req, res) {
       originalDimensions,
       upscaledDimensions,
     } = req.query;
+
     if (!imageUrl) {
       return res.redirect('/upload');
     }

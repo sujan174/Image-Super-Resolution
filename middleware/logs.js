@@ -3,6 +3,7 @@ const path = require('path');
 
 const logFilePath = path.join(__dirname, '../log.txt');
 
+// Log all incoming HTTP requests to a file with timestamp
 function logMiddleware(req, res, next) {
   const logEntry = `${new Date().toISOString()} - ${req.method}: ${req.originalUrl}\n`;
 

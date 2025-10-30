@@ -5,11 +5,13 @@ const userModel = require('../../models/user');
 
 const IMAGES_DIR = path.join(__dirname, '../../public/images/');
 
+// Create and download a ZIP archive of images filtered by feedback status
 async function handleDownloadFeedback(req, res) {
   try {
     const { status } = req.query;
     const likedResult = status === 'liked';
 
+    // Query all users with matching feedback
     const users = await userModel.find({ 'imageHistory.likedResult': likedResult }).lean();
 
     const imagesToZip = users.flatMap((user) => user.imageHistory.filter((item) => item.likedResult === likedResult));
@@ -18,6 +20,7 @@ async function handleDownloadFeedback(req, res) {
       return res.status(404).send('No images to download for this category.');
     }
 
+    // Create ZIP archive with both original and upscaled images
     const archive = archiver('zip', {
       zlib: { level: 9 },
     });

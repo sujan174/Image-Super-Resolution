@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 
+// Redirect authenticated users to upload page, preventing access to login/signup
 function redirectIfLoggedIn(req, res, next) {
   const token = req.cookies.token;
 

@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 
+// Verify JWT token and attach user payload to request, redirect to login if invalid
 function checkForAuthentication(req, res, next) {
   const token = req.cookies.token;
 

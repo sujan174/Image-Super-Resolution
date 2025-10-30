@@ -1,9 +1,11 @@
 const userModel = require('../../models/user');
 
+// Display admin dashboard with aggregated statistics across all users
 async function handleAdminDashboard(req, res) {
   try {
     const users = await userModel.find({}).lean();
 
+    // Calculate statistics from user image history data
     let totalUpscales = 0;
     let likedCount = 0;
     let dislikedCount = 0;
@@ -52,6 +54,7 @@ async function handleAdminDashboard(req, res) {
   }
 }
 
+// Retrieve and display all registered users for admin management
 async function handleGetAllUsers(req, res) {
   try {
     const users = await userModel.find({}).lean();
@@ -62,6 +65,7 @@ async function handleGetAllUsers(req, res) {
   }
 }
 
+// Display detailed information for a specific user including their image history
 async function handleGetUserDetail(req, res) {
   try {
     const userId = req.params.id;
@@ -78,6 +82,7 @@ async function handleGetUserDetail(req, res) {
   }
 }
 
+// Show feedback from users based on whether they liked or disliked upscaled images
 async function handleAdminFeedbackView(req, res) {
   try {
     const { status } = req.query;
@@ -85,6 +90,7 @@ async function handleAdminFeedbackView(req, res) {
 
     const usersWithFeedback = await userModel.find({ 'imageHistory.likedResult': likedResult }).lean();
 
+    // Flatten user image history into single feedback list with user names
     const feedbackItems = usersWithFeedback.flatMap((user) => user.imageHistory
       .filter((item) => item.likedResult === likedResult)
       .map((item) => ({

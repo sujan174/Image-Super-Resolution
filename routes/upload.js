@@ -13,6 +13,7 @@ const IMAGES_DIR = path.join(__dirname, '../public/images/');
 
 fs.mkdirSync(IMAGES_DIR, { recursive: true });
 
+// Configure multer storage for handling uploaded image files
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, IMAGES_DIR),
   filename: (req, file, cb) => {
@@ -23,6 +24,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
+// Display upload page for authenticated users
 router.get('/', checkForAuthentication, async (req, res) => {
   try {
     const { error, success } = req.query;
@@ -34,6 +36,7 @@ router.get('/', checkForAuthentication, async (req, res) => {
   }
 });
 
+// Define routes for image upload, feedback submission, and result display
 router.post('/', checkForAuthentication, upload.single('imageFile'), handleUpload);
 router.post('/feedback', checkForAuthentication, handleFeedback);
 router.get('/result', handleResult);

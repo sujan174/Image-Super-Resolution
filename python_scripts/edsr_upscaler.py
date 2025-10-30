@@ -1,3 +1,4 @@
+# EDSR (Enhanced Deep Residual Networks) image upscaling implementation
 import torch
 import gc
 import traceback
@@ -20,6 +21,7 @@ class ImageUpscaler:
         self.model = None
         self.scale = scale
         self.log_file_path = log_file_path
+        # Automatically use GPU if available for faster processing
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         self._log(f"Using device: {self.device}")
 
@@ -51,6 +53,7 @@ class ImageUpscaler:
             self._log(traceback.format_exc())
             raise
 
+    # Process input image through EDSR model to produce upscaled output
     def upscale_image(self, image_path: str) -> Optional[Image.Image]:
         if not self.model:
             self._log("ERROR: Model is not loaded, cannot upscale.")
@@ -66,6 +69,7 @@ class ImageUpscaler:
                 preds = self.model(inputs)
             self._log("Inference complete.")
 
+            # Convert tensor output back to PIL Image format
             output_tensor = preds.data.squeeze().float().cpu().clamp_(0, 1)
             output_numpy = np.transpose(output_tensor.numpy(), (1, 2, 0))
             output_image = Image.fromarray((output_numpy * 255.0).round().astype(np.uint8))

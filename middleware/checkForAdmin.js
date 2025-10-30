@@ -1,5 +1,6 @@
 const userModel = require('../models/user');
 
+// Verify user has admin privileges before allowing access to admin routes
 async function checkForAdmin(req, res, next) {
   try {
     if (!req.user || !req.user.id) {
@@ -7,6 +8,7 @@ async function checkForAdmin(req, res, next) {
       return res.redirect(`/user/login?error=${encodeURIComponent(errorMsg)}`);
     }
 
+    // Query database to check admin status
     const user = await userModel.findById(req.user.id).lean();
 
     if (user && user.admin) {

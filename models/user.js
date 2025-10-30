@@ -1,3 +1,4 @@
+//Developed by Tushar wadiwa
 const mongoose = require('mongoose');
 
 // Define user schema with authentication fields and image upscaling history
